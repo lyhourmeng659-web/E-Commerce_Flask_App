@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0346c3d8-f5b5-4d27-b046-04cb0e6dd716" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/E-Commerce_Flask_App.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Flask Main" />
+        <option value="CSS File" />
+        <option value="Python Script" />
+        <option value="HTML File" />
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/.gitignore" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/README.md" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/__init__.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/core/base_service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/admin/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/admin/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/auth/model.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/auth/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/auth/schema.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/auth/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/cart/model.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/cart/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/cart/schema.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/categories/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/categories/schema.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/categories/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/categories/utils.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/main/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/notifications/model.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/notifications/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/notifications/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/notifications/utils.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/orders/model.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/orders/pdf.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/orders/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/orders/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/orders/utils.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/products/model.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/products/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/products/schema.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/products/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/support/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/support/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/users/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/wishlist/routes.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/wishlist/schema.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/wishlist/service.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/modules/wishlist/utils.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/shared/constants.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/shared/marshmallow_utils.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/admin_categories.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/categories.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/category_detail.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/category_grid.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/dashboard.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/main.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/product_featured.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/css/products.css" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/js/admin_product_form.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/js/hero_slider.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/js/order_update_status_dropdown.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/js/product_qty.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/static/js/support_update_status_dropdown.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/categories/categories.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/categories/category_form.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/dashboard.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/orders/order_detail.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/orders/orders.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/products/product_form.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/products/products.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/supports/support_detail.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/supports/supports.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/admin/users/users.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/email/invoice.html" root0="SKIP_INSPECTION" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/email/password_reset.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/email/support_reply.html" root0="SKIP_INSPECTION" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/templates/email/welcome.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/error/403.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/error/404.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/error/500.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/cart.html" root0="SKIP_INSPECTION" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/categories.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/category_detail.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/checkout.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/forgot_password.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/home.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/login.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/notifications.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/order_history.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/order_success.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/product_details.html" root0="SKIP_INSPECTION" root1="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/products.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/register.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/reset_password.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/support.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/front/wishlist.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/master.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/share/script.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/templates/share/style.html" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/seed.py" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="39moWr8qkQBpF7EgMEhtwWqAhFX" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/User/E-Commerce_Flask_App",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\User\E-Commerce_Flask_App\app\templates\admin\orders" />
+      <recent name="C:\Users\User\E-Commerce_Flask_App\app\templates\admin" />
+      <recent name="C:\Users\User\E-Commerce_Flask_App\app\templates\partials" />
+      <recent name="C:\Users\User\E-Commerce_Flask_App\app\templates\admin\products" />
+      <recent name="C:\Users\User\E-Commerce_Flask_App\app\core" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="E-Commerce_Flask_App" type="Python.FlaskServer">
+      <module name="E-Commerce_Flask_App" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.26775.22" />
+        <option value="bundled-python-sdk-9f73701ac511-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.26775.22" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0346c3d8-f5b5-4d27-b046-04cb0e6dd716" name="Changes" comment="" />
+      <created>1771310641549</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1771310641549</updated>
+      <workItem from="1771310642905" duration="20193000" />
+      <workItem from="1771394353799" duration="227000" />
+      <workItem from="1771394671053" duration="16076000" />
+      <workItem from="1771450147590" duration="250000" />
+      <workItem from="1771450549649" duration="12447000" />
+      <workItem from="1771469764838" duration="4916000" />
+      <workItem from="1771567526470" duration="23073000" />
+      <workItem from="1771594020727" duration="15050000" />
+      <workItem from="1771611152841" duration="676000" />
+      <workItem from="1771648546880" duration="9898000" />
+      <workItem from="1771665980136" duration="8132000" />
+      <workItem from="1771675506758" duration="11027000" />
+      <workItem from="1771745292223" duration="24999000" />
+      <workItem from="1771817956916" duration="21373000" />
+      <workItem from="1771853328325" duration="15952000" />
+      <workItem from="1771902117596" duration="6321000" />
+      <workItem from="1771908526427" duration="604000" />
+      <workItem from="1771919366542" duration="12521000" />
+      <workItem from="1771949251483" duration="7360000" />
+      <workItem from="1772001281427" duration="13649000" />
+      <workItem from="1772026087184" duration="15501000" />
+      <workItem from="1772079511162" duration="152000" />
+      <workItem from="1772081215907" duration="32084000" />
+      <workItem from="1772120807356" duration="10839000" />
+      <workItem from="1772172570712" duration="38686000" />
+      <workItem from="1772255977564" duration="15671000" />
+      <workItem from="1772282005512" duration="11611000" />
+      <workItem from="1772348429055" duration="4752000" />
+      <workItem from="1772353317971" duration="9780000" />
+      <workItem from="1772423379887" duration="6135000" />
+      <workItem from="1772433799460" duration="11073000" />
+      <workItem from="1772462179552" duration="14062000" />
+      <workItem from="1772509290791" duration="1754000" />
+      <workItem from="1772522003336" duration="7355000" />
+      <workItem from="1772553630900" duration="7411000" />
+      <workItem from="1772598939642" duration="9038000" />
+      <workItem from="1772613977803" duration="8144000" />
+      <workItem from="1772626854518" duration="5625000" />
+      <workItem from="1772633985876" duration="18485000" />
+      <workItem from="1772687616985" duration="14600000" />
+      <workItem from="1772702370931" duration="8509000" />
+      <workItem from="1772719030926" duration="10307000" />
+      <workItem from="1772774728640" duration="74000" />
+      <workItem from="1772776674570" duration="14047000" />
+      <workItem from="1772885354862" duration="2044000" />
+      <workItem from="1772895112393" duration="9358000" />
+      <workItem from="1772949770655" duration="2049000" />
+      <workItem from="1772988055963" duration="2019000" />
+      <workItem from="1773016894979" duration="27299000" />
+      <workItem from="1773067363936" duration="7063000" />
+      <workItem from="1773108951044" duration="6982000" />
+      <workItem from="1773129645371" duration="1035000" />
+      <workItem from="1773134439537" duration="5733000" />
+      <workItem from="1773215742792" duration="50000" />
+      <workItem from="1774365773471" duration="2296000" />
+      <workItem from="1775056499656" duration="7671000" />
+      <workItem from="1775101003560" duration="2546000" />
+      <workItem from="1775109379090" duration="2621000" />
+      <workItem from="1775122271554" duration="3232000" />
+      <workItem from="1775133987072" duration="2610000" />
+      <workItem from="1775138521764" duration="11907000" />
+      <workItem from="1775203805043" duration="1627000" />
+      <workItem from="1775205486725" duration="5948000" />
+      <workItem from="1775211540379" duration="2184000" />
+      <workItem from="1775228452096" duration="5784000" />
+      <workItem from="1775284944377" duration="9691000" />
+      <workItem from="1775315610253" duration="26000" />
+      <workItem from="1775316015505" duration="8808000" />
+      <workItem from="1775361592072" duration="305000" />
+      <workItem from="1775406922877" duration="1829000" />
+      <workItem from="1775474384322" duration="16432000" />
+      <workItem from="1775533313109" duration="20230000" />
+      <workItem from="1775572374248" duration="8899000" />
+      <workItem from="1775669926250" duration="2919000" />
+      <workItem from="1775803079094" duration="195000" />
+      <workItem from="1775838200025" duration="2937000" />
+      <workItem from="1775891329756" duration="46000" />
+      <workItem from="1775921304373" duration="6852000" />
+      <workItem from="1776047914241" duration="7463000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

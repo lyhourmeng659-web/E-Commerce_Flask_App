@@ -1,0 +1,143 @@
+{% extends "master.html" %}
+{% block title %}Users — Admin{% endblock %}
+{% block content %}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;">
+        <div>
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                Admin</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                Users</h1>
+            <p style="font-size:.75rem;color:#94A3B8;font-weight:600;margin:4px 0 0;">
+                {{ total_users }} total
+                <span style="margin:0 6px;color:#E2E8F0;">·</span>{{ verified_users }} verified
+                <span style="margin:0 6px;color:#E2E8F0;">·</span>{{ admin_users }} admins
+            </p>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}"
+           style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#64748B;border:1.5px solid #E2E8F0;font-size:.8125rem;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;transition:all .2s;"
+           onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+           onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+        {% if users %}
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;min-width:600px;">
+                    <thead>
+                    <tr style="background:#F8FAFC;border-bottom:1.5px solid #F1F5F9;">
+                        <th style="text-align:left;padding:11px 20px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            User
+                        </th>
+                        <th style="text-align:left;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Joined
+                        </th>
+                        <th style="text-align:center;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Role
+                        </th>
+                        <th style="text-align:center;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Verified
+                        </th>
+                        <th style="text-align:center;padding:11px 20px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr style="border-bottom:1px solid #F8FAFC;transition:background .15s;"
+                            onmouseover="this.style.background='#F8FAFC'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding:13px 20px;">
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <span style="font-size:.875rem;font-weight:800;color:#4F46E5;">{{ user.name[0].upper() if user.name else '?' }}</span>
+                                    </div>
+                                    <div>
+                                        <p style="font-size:.875rem;font-weight:700;color:#0F172A;margin:0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ user.name }}</p>
+                                        <p style="font-size:.6875rem;color:#94A3B8;margin:2px 0 0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ user.email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="padding:13px 14px;font-size:.8125rem;color:#64748B;">{{ user.created_at.strftime('%d %b %Y') }}</td>
+                            <td style="padding:13px 14px;text-align:center;">
+                        <span style="display:inline-flex;align-items:center;font-size:.6875rem;font-weight:700;padding:4px 12px;border-radius:99px;{{ 'color:#4F46E5;background:#EEF2FF;border:1px solid #C7D2FE;' if user.is_admin else 'color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;' }}">
+                            {{ 'Admin' if user.is_admin else 'User' }}
+                        </span>
+                            </td>
+                            <td style="padding:13px 14px;text-align:center;">
+                        <span style="display:inline-flex;align-items:center;font-size:.6875rem;font-weight:700;padding:4px 12px;border-radius:99px;{{ 'color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;' if user.is_verified else 'color:#D97706;background:#FFFBEB;border:1px solid #FDE68A;' }}">
+                            {{ '✓ Verified' if user.is_verified else '✗ Pending' }}
+                        </span>
+                            </td>
+                            <td style="padding:13px 20px;">
+                                <div style="display:flex;justify-content:center;gap:6px;flex-wrap:wrap;">
+                                    {# Verify / Unverify #}
+                                    <form method="POST"
+                                          action="{{ url_for('admin.toggle_verify_user', user_id=user.id) }}"
+                                          style="display:inline;">
+                                        <button type="submit"
+                                                style="font-size:.6875rem;font-weight:700;color:#4F46E5;background:#EEF2FF;padding:5px 10px;border-radius:6px;border:none;cursor:pointer;transition:background .2s;"
+                                                onmouseover="this.style.background='#C7D2FE'"
+                                                onmouseout="this.style.background='#EEF2FF'">
+                                            {{ 'Unverify' if user.is_verified else 'Verify' }}
+                                        </button>
+                                    </form>
+                                    {% if user.id != current_user.id %}
+                                        {% if user.is_admin %}
+                                            <form method="POST"
+                                                  action="{{ url_for('admin.demote_user', user_id=user.id) }}"
+                                                  style="display:inline;"
+                                                  onsubmit="return confirm('Demote {{ user.name }} to regular user?')">
+                                                <button type="submit"
+                                                        style="font-size:.6875rem;font-weight:700;color:#D97706;background:#FFFBEB;padding:5px 10px;border-radius:6px;border:none;cursor:pointer;transition:background .2s;"
+                                                        onmouseover="this.style.background='#FDE68A'"
+                                                        onmouseout="this.style.background='#FFFBEB'">
+                                                    Demote
+                                                </button>
+                                            </form>
+                                        {% else %}
+                                            <form method="POST"
+                                                  action="{{ url_for('admin.promote_user', user_id=user.id) }}"
+                                                  style="display:inline;">
+                                                <button type="submit"
+                                                        style="font-size:.6875rem;font-weight:700;color:#7C3AED;background:#F5F3FF;padding:5px 10px;border-radius:6px;border:none;cursor:pointer;transition:background .2s;"
+                                                        onmouseover="this.style.background='#DDD6FE'"
+                                                        onmouseout="this.style.background='#F5F3FF'">
+                                                    Make Admin
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="padding:60px;text-align:center;">
+                <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="bi bi-people" style="font-size:2rem;color:#4F46E5;"></i>
+                </div>
+                <p style="font-size:.875rem;font-weight:600;color:#94A3B8;margin:0;">No users yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <div style="display:flex;justify-content:center;gap:6px;margin-top:20px;">
+            {% for p in pagination.iter_pages(left_edge=1,right_edge=1,left_current=2,right_current=2) %}
+                {% if p %}
+                    <a href="{{ url_for('admin.users', page=p) }}"
+                       style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:.8125rem;font-weight:700;border-radius:8px;text-decoration:none;border:1.5px solid {{ '#4F46E5' if p == pagination.page else '#E2E8F0' }};background:{{ '#4F46E5' if p == pagination.page else '#fff' }};color:{{ '#fff' if p == pagination.page else '#64748B' }};">{{ p }}</a>
+                {% else %}
+                    <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#CBD5E1;">…</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

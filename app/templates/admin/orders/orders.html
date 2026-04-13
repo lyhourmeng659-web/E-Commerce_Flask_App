@@ -1,0 +1,115 @@
+{% extends "master.html" %}
+{% block title %}Orders — Admin{% endblock %}
+{% block content %}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;">
+        <div>
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                Admin</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                Orders</h1>
+        </div>
+        <a href="{{ url_for('admin.dashboard') }}"
+           style="display:inline-flex;align-items:center;gap:6px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:color .2s;"
+           onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#64748B'">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    {# Status filter tabs #}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+        <a href="{{ url_for('admin.orders') }}"
+           style="font-size:.75rem;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;transition:all .2s;border:1.5px solid {{ '#4F46E5' if not current_status else '#E2E8F0' }};background:{{ '#4F46E5' if not current_status else '#fff' }};color:{{ '#fff' if not current_status else '#64748B' }};">
+            All ({{ pagination.total }})
+        </a>
+        {% for st in order_statuses %}
+            <a href="{{ url_for('admin.orders', status=st) }}"
+               style="font-size:.75rem;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;transition:all .2s;border:1.5px solid {{ '#4F46E5' if current_status == st else '#E2E8F0' }};background:{{ '#4F46E5' if current_status == st else '#fff' }};color:{{ '#fff' if current_status == st else '#64748B' }};">
+                {{ st|replace('_',' ')|title }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+        {% if orders %}
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;min-width:620px;">
+                    <thead>
+                    <tr style="background:#F8FAFC;border-bottom:1.5px solid #F1F5F9;">
+                        <th style="text-align:left;padding:11px 20px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Order
+                        </th>
+                        <th style="text-align:left;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Customer
+                        </th>
+                        <th style="text-align:center;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Status
+                        </th>
+                        <th style="text-align:right;padding:11px 20px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Total
+                        </th>
+                        <th style="text-align:center;padding:11px 14px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;">
+                            Action
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% set sc = {'pending':('#D97706','#FFFBEB','#FDE68A'),'paid':('#4F46E5','#EEF2FF','#C7D2FE'),'shipped':('#7C3AED','#F5F3FF','#DDD6FE'),'delivered':('#059669','#ECFDF5','#A7F3D0'),'cancelled':('#EF4444','#FEF2F2','#FECACA')} %}
+                    {% for order in orders %}
+                        {% set c = sc.get(order.status, sc['pending']) %}
+                        <tr style="border-bottom:1px solid #F8FAFC;transition:background .15s;"
+                            onmouseover="this.style.background='#F8FAFC'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding:13px 20px;">
+                                <p style="font-size:.875rem;font-weight:700;color:#0F172A;margin:0;">
+                                    #{{ order.order_number }}</p>
+                                <p style="font-size:.6875rem;color:#94A3B8;margin:2px 0 0;">{{ order.created_at.strftime('%d %b %Y') }}</p>
+                            </td>
+                            <td style="padding:13px 14px;">
+                                <p style="font-size:.875rem;font-weight:600;color:#0F172A;margin:0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ order.customer_name }}</p>
+                                <p style="font-size:.6875rem;color:#94A3B8;margin:2px 0 0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ order.customer_email }}</p>
+                            </td>
+                            <td style="padding:13px 14px;text-align:center;">
+                        <span style="display:inline-flex;align-items:center;font-size:.6875rem;font-weight:700;color:{{ c[0] }};background:{{ c[1] }};border:1px solid {{ c[2] }};padding:4px 12px;border-radius:99px;text-transform:capitalize;white-space:nowrap;">
+                            {{ order.status }}
+                        </span>
+                            </td>
+                            <td style="padding:13px 20px;text-align:right;">
+                                <span style="font-family:'Outfit',sans-serif;font-size:.9375rem;font-weight:800;color:#0F172A;">{{ order.formatted_total }}</span>
+                            </td>
+                            <td style="padding:13px 14px;text-align:center;">
+                                <a href="{{ url_for('admin.order_detail', order_id=order.id) }}"
+                                   style="display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:700;color:#fff;background:#4F46E5;padding:6px 14px;border-radius:8px;text-decoration:none;transition:background .2s;"
+                                   onmouseover="this.style.background='#3730A3'"
+                                   onmouseout="this.style.background='#4F46E5'">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="padding:60px;text-align:center;">
+                <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="bi bi-bag" style="font-size:2rem;color:#4F46E5;"></i>
+                </div>
+                <p style="font-size:.875rem;font-weight:600;color:#94A3B8;margin:0;">No orders found.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+        <div style="display:flex;justify-content:center;gap:6px;margin-top:20px;">
+            {% for p in pagination.iter_pages(left_edge=1,right_edge=1,left_current=2,right_current=2) %}
+                {% if p %}
+                    <a href="{{ url_for('admin.orders', page=p, status=current_status) }}"
+                       style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:.8125rem;font-weight:700;border-radius:8px;text-decoration:none;border:1.5px solid {{ '#4F46E5' if p == pagination.page else '#E2E8F0' }};background:{{ '#4F46E5' if p == pagination.page else '#fff' }};color:{{ '#fff' if p == pagination.page else '#64748B' }};">{{ p }}</a>
+                {% else %}
+                    <span style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#CBD5E1;">…</span>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}

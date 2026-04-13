@@ -1,0 +1,58 @@
+<link rel="stylesheet" href="{{ url_for('static', filename="css/product_featured.css") }}">
+{% if products %}
+    <div style="display:grid;grid-template-columns:repeat(1,1fr);gap:20px;" class="feat-grid">
+        {% for product in products %}
+            <div class="prod-card">
+                <!-- Image -->
+                <div class="prod-img-wrap">
+                    <a href="{{ url_for('products.product_detail', product_id=product.id) }}"
+                       style="position:absolute;inset:0;z-index:0;" aria-label="View {{ product.title }}"></a>
+
+                    <img src="{{ url_for('static', filename=product.image) }}"
+                         alt="{{ product.title }}" loading="lazy">
+
+                    {% if product.is_low_stock %}
+                        <span class="prod-badge">Low Stock</span>
+                    {% endif %}
+
+                    {% set in_wishlist = product.id in wishlist_ids %}
+                    <form method="POST"
+                          action="{{ url_for('wishlist.remove' if in_wishlist else 'wishlist.add', product_id=product.id) }}"
+                          style="position:absolute;top:12px;right:12px;z-index:20;">
+                        <button type="submit" class="prod-wish-btn {{ 'active' if in_wishlist else '' }}"
+                                aria-label="{{ 'Remove from' if in_wishlist else 'Add to' }} wishlist">
+                            <i class="bi {{ 'bi-heart-fill' if in_wishlist else 'bi-heart' }}"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Body -->
+                <div class="prod-body">
+                    <span class="prod-category">{{ product.category.name }}</span>
+                    <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="prod-title">
+                        {{ product.title }}
+                    </a>
+                    <div class="prod-footer">
+                        <span class="prod-price">{{ product.formatted_price }}</span>
+                        <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="prod-cta">
+                            View <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 24px;border:2px dashed #E2E8F0;border-radius:16px;background:#F8FAFC;">
+        <i class="bi bi-box-seam" style="font-size:2.5rem;color:#CBD5E1;margin-bottom:16px;"></i>
+        <p style="font-size:.8125rem;font-weight:600;color:#94A3B8;text-align:center;">
+            No featured products available right now.
+        </p>
+    </div>
+{% endif %}
+
+<style>
+    @media (min-width:640px)  { .feat-grid { grid-template-columns: repeat(2,1fr) !important; } }
+    @media (min-width:1024px) { .feat-grid { grid-template-columns: repeat(4,1fr) !important; } }
+</style>

@@ -1,0 +1,127 @@
+{% extends "master.html" %}
+{% block title %}{% if keyword %}Search: {{ keyword }}{% else %}All Products{% endif %} - ShopHub{% endblock %}
+
+{% block content %}
+
+    {#  Page Header  #}
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/products.css") }}">
+    <div style="margin-bottom:40px;padding-bottom:24px;border-bottom:1.5px solid #F1F5F9;">
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:8px;">
+            {% if keyword %}Search Results{% else %}Catalogue{% endif %}
+        </p>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;">
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+                {% if keyword %}
+                    Results for <span style="color:#4F46E5;">"{{ keyword }}"</span>
+                {% else %}
+                    All Products
+                {% endif %}
+            </h1>
+            <span style="font-size:.8125rem;font-weight:600;color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 14px;border-radius:99px;">
+            {{ products.total }} items
+        </span>
+        </div>
+    </div>
+
+    {#  Products Grid  #}
+    {% if products.items %}
+        <div style="display:grid;grid-template-columns:repeat(1,1fr);gap:20px;" class="pl-grid">
+            {% for product in products.items %}
+                <div class="prod-card">
+                    <!-- Image -->
+                    <div class="prod-img-wrap">
+                        <a href="{{ url_for('products.product_detail', product_id=product.id) }}"
+                           style="position:absolute;inset:0;z-index:0;" aria-label="View {{ product.title }}"></a>
+                        <img src="{{ url_for('static', filename=product.image) }}"
+                             alt="{{ product.title }}" loading="lazy">
+                        {% if product.is_low_stock %}
+                            <span class="prod-badge">Low Stock</span>
+                        {% endif %}
+                        {% set in_wishlist = product.id in wishlist_ids %}
+                        <form method="POST"
+                              action="{{ url_for('wishlist.remove' if in_wishlist else 'wishlist.add', product_id=product.id) }}"
+                              style="position:absolute;top:12px;right:12px;z-index:20;">
+                            <button type="submit" class="prod-wish-btn {{ 'active' if in_wishlist else '' }}"
+                                    aria-label="{{ 'Remove from' if in_wishlist else 'Add to' }} wishlist">
+                                <i class="bi {{ 'bi-heart-fill' if in_wishlist else 'bi-heart' }}"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <!-- Body -->
+                    <div class="prod-body">
+                        <span class="prod-category">{{ product.category.name }}</span>
+                        <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="prod-title">
+                            {{ product.title }}
+                        </a>
+                        <div class="prod-footer">
+                            <span class="prod-price">{{ product.formatted_price }}</span>
+                            <a href="{{ url_for('products.product_detail', product_id=product.id) }}" class="prod-cta">
+                                View <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {#  Pagination  #}
+        {% if products.has_prev or products.has_next %}
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:56px;padding-top:32px;border-top:1.5px solid #F1F5F9;">
+
+                {% if products.has_prev %}
+                    <a href="?page={{ products.prev_num }}{% if keyword %}&q={{ keyword }}{% endif %}"
+                       style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:all .2s;background:#fff;"
+                       onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                {% endif %}
+
+                {# Page numbers #}
+                {% for p in range(1, products.pages + 1) %}
+                    {% if p == products.page %}
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;background:#4F46E5;color:#fff;font-size:.875rem;font-weight:700;">
+                        {{ p }}
+                    </span>
+                    {% elif p == 1 or p == products.pages or (p >= products.page - 1 and p <= products.page + 1) %}
+                        <a href="?page={{ p }}{% if keyword %}&q={{ keyword }}{% endif %}"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1.5px solid #E2E8F0;font-size:.875rem;font-weight:600;color:#64748B;text-decoration:none;transition:all .2s;background:#fff;"
+                           onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                           onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                            {{ p }}
+                        </a>
+                    {% elif p == products.page - 2 or p == products.page + 2 %}
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;color:#CBD5E1;font-weight:600;">…</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if products.has_next %}
+                    <a href="?page={{ products.next_num }}{% if keyword %}&q={{ keyword }}{% endif %}"
+                       style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:all .2s;background:#fff;"
+                       onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {#  Empty state  #}
+    {% else %}
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;border:2px dashed #E2E8F0;border-radius:20px;background:#F8FAFC;text-align:center;">
+            <div style="width:72px;height:72px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+                <i class="bi bi-search" style="font-size:2rem;color:#4F46E5;"></i>
+            </div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:700;color:#0F172A;margin-bottom:8px;">
+                No results found</h3>
+            <p style="font-size:.875rem;color:#94A3B8;margin-bottom:28px;max-width:320px;">
+                We couldn't find any products matching your search. Try different keywords.
+            </p>
+            <a href="{{ url_for('products.products_list') }}"
+               style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;font-size:.8125rem;font-weight:700;padding:11px 24px;border-radius:8px;text-decoration:none;transition:all .2s;"
+               onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                <i class="bi bi-arrow-left"></i> Back to All Products
+            </a>
+        </div>
+    {% endif %}
+{% endblock %}

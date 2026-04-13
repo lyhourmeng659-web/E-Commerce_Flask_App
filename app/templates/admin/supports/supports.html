@@ -1,0 +1,69 @@
+{% extends "master.html" %}
+{% block title %}Support Inbox — Admin{% endblock %}
+{% block content %}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;">
+        <div>
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                Admin</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                Support Inbox</h1>
+            {% if unread_count > 0 %}
+                <p style="font-size:.75rem;color:#EF4444;font-weight:700;margin:4px 0 0;">{{ unread_count }} unread</p>
+            {% endif %}
+        </div>
+        <div style="display:flex;gap:8px;">
+            <a href="{{ url_for('admin.support') }}"
+               style="font-size:.75rem;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;border:1.5px solid {{ '#4F46E5' if not unread_only else '#E2E8F0' }};background:{{ '#4F46E5' if not unread_only else '#fff' }};color:{{ '#fff' if not unread_only else '#64748B' }};">
+                All
+            </a>
+            <a href="{{ url_for('admin.support', unread=1) }}"
+               style="font-size:.75rem;font-weight:700;padding:7px 16px;border-radius:99px;text-decoration:none;border:1.5px solid {{ '#4F46E5' if unread_only else '#E2E8F0' }};background:{{ '#4F46E5' if unread_only else '#fff' }};color:{{ '#fff' if unread_only else '#64748B' }};">
+                Unread {% if unread_count > 0 %}({{ unread_count }}){% endif %}
+            </a>
+        </div>
+    </div>
+
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+        {% set ssc = {'open':('#D97706','#FFFBEB','#FDE68A'),'in_progress':('#4F46E5','#EEF2FF','#C7D2FE'),'resolved':('#059669','#ECFDF5','#A7F3D0')} %}
+        {% if messages %}
+            {% for msg in messages %}
+                {% set sc = ssc.get(msg.status or 'open', ssc['open']) %}
+                <a href="{{ url_for('admin.support_detail', message_id=msg.id) }}"
+                   style="display:flex;align-items:flex-start;gap:14px;padding:16px 20px;border-bottom:1px solid #F8FAFC;text-decoration:none;transition:background .15s;background:{{ 'rgba(238,242,255,.3)' if not msg.is_read else 'transparent' }};"
+                   onmouseover="this.style.background='#F8FAFC'"
+                   onmouseout="this.style.background='{{ 'rgba(238,242,255,.3)' if not msg.is_read else 'transparent' }}'">
+
+                    <div style="width:40px;height:40px;border-radius:10px;background:{{ '#EEF2FF' if not msg.is_read else '#F8FAFC' }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <span style="font-size:.9375rem;font-weight:800;color:{{ '#4F46E5' if not msg.is_read else '#94A3B8' }};">{{ msg.name[0].upper() if msg.name else '?' }}</span>
+                    </div>
+
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+                            <p style="font-size:.875rem;font-weight:{{ '700' if not msg.is_read else '600' }};color:#0F172A;margin:0;">{{ msg.name }}</p>
+                            {% if not msg.is_read %}
+                                <span style="width:6px;height:6px;border-radius:50%;background:#4F46E5;flex-shrink:0;"></span>
+                            {% endif %}
+                        </div>
+                        <p style="font-size:.8125rem;font-weight:600;color:#64748B;margin:0 0 2px;">{{ msg.subject or 'General Inquiry' }}</p>
+                        <p style="font-size:.75rem;color:#94A3B8;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ msg.message }}</p>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+                    <span style="display:inline-flex;align-items:center;font-size:.625rem;font-weight:700;color:{{ sc[0] }};background:{{ sc[1] }};border:1px solid {{ sc[2] }};padding:3px 10px;border-radius:99px;text-transform:capitalize;white-space:nowrap;">
+                        {{ (msg.status or 'open')|replace('_',' ') }}
+                    </span>
+                        <span style="font-size:.6875rem;color:#94A3B8;">{{ msg.created_at.strftime('%d %b') }}</span>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div style="padding:60px;text-align:center;">
+                <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="bi bi-chat-dots" style="font-size:2rem;color:#4F46E5;"></i>
+                </div>
+                <p style="font-size:.875rem;font-weight:600;color:#94A3B8;margin:0;">No support messages.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,132 @@
+.adm-eyebrow {
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #4F46E5;
+    margin-bottom: 6px;
+}
+
+.adm-h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    color: #0F172A;
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+.adm-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1.5px solid #F1F5F9;
+}
+
+.adm-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #4F46E5;
+    color: #fff;
+    font-size: .8125rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(79, 70, 229, .3);
+    border: none;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.adm-btn-primary:hover {
+    background: #3730A3;
+}
+
+.adm-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: #64748B;
+    border: 1.5px solid #E2E8F0;
+    font-size: .8125rem;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all .2s;
+    cursor: pointer;
+}
+
+.adm-btn-outline:hover {
+    border-color: #4F46E5;
+    color: #4F46E5;
+}
+
+.adm-card {
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.adm-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1.5px solid #F1F5F9;
+}
+
+.adm-card-title {
+    font-size: .9375rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0;
+}
+
+.adm-pill {
+    display: inline-flex;
+    align-items: center;
+    font-size: .6875rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.adm-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.adm-th {
+    padding: 10px 20px;
+    font-size: .6875rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94A3B8;
+    background: #F8FAFC;
+    border-bottom: 1px solid #F1F5F9;
+}
+
+.adm-tr {
+    border-bottom: 1px solid #F8FAFC;
+    transition: background .15s;
+}
+
+.adm-tr:hover {
+    background: #F8FAFC;
+}
+
+.adm-td {
+    padding: 12px 20px;
+}

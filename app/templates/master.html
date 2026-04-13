@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}E-Commerce Shop.{% endblock %}</title>
+    {% include 'share/style.html' %}
+    {% block head %}{% endblock %}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+</head>
+
+<body class="flex flex-col min-h-screen">
+
+<!--  HEADER  -->
+<header class="site-header" id="siteHeader">
+    <div style="max-width:88rem;margin:0 auto;padding:0 20px;">
+
+        <!-- Top bar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px;">
+
+            <!-- Logo -->
+            <a href="{{ url_for('main.home') }}" class="logo" aria-label="E-Commerce Home">
+                ShopHub<span class="logo-dot"></span>
+            </a>
+
+            <!-- Search (desktop) -->
+            <div class="search-wrap hidden sm:block">
+                <form action="{{ url_for('products.search_product') }}" method="GET" role="search">
+                    <i class="bi bi-search"></i>
+                    <input class="search-input"
+                           type="search" name="q"
+                           placeholder="Search products…"
+                           aria-label="Search products">
+                </form>
+            </div>
+
+            <!-- Desktop nav -->
+            <nav class="hidden lg:flex items-center" style="gap:4px;" aria-label="Main navigation">
+                <a href="{{ url_for('main.home') }}" class="nav-link" style="padding:6px 12px;">Home</a>
+
+                <!-- Categories mega -->
+                <div class="mega-trigger" style="position:relative;padding:6px 12px;">
+                    <button class="nav-link"
+                            style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit;"
+                            aria-haspopup="true">
+                        Categories
+                        <i class="bi bi-chevron-down" style="font-size:.65rem;transition:transform .25s;"></i>
+                    </button>
+                    <div class="mega-menu" role="menu">
+                        <p class="mega-header">Browse Collections</p>
+                        <div class="category-grid">
+                            {% for category in all_categories %}
+                                <a href="{{ url_for('categories.category_detail', slug=category.slug) }}"
+                                   class="category-item" role="menuitem">
+                                    {{ category.name }}
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('support.support') }}" class="nav-link" style="padding:6px 12px;">Support</a>
+            </nav>
+
+            <!-- Right cluster -->
+            <div style="display:flex;align-items:center;gap:6px;">
+
+                <!-- Notification bell -->
+                <div style="position:relative;" id="notifBellWrapper">
+                    {% if current_user.is_authenticated %}
+                        <button id="notifBellBtn" class="icon-btn"
+                                aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+                            <i class="bi bi-bell"></i>
+                            {% if notif_count is defined and notif_count > 0 %}
+                                <span class="badge" id="notifBadge">
+                                    {{ notif_count if notif_count < 10 else '9+' }}
+                                </span>
+                            {% endif %}
+                        </button>
+
+                        <div id="notifDropdown" class="notif-panel hidden" role="menu" aria-label="Notifications">
+                            <div class="notif-header">
+                                <span class="notif-title">
+                                    Notifications
+                                    {% if notif_count is defined and notif_count > 0 %}
+                                        <span style="color:var(--indigo);margin-left:4px;">({{ notif_count }})</span>
+                                    {% endif %}
+                                </span>
+                                {% if notif_count is defined and notif_count > 0 %}
+                                    <form method="POST" action="{{ url_for('notifications.mark_all_read') }}">
+                                        <button type="submit" class="notif-mark-btn">Mark all read</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+
+                            <ul class="notif-list">
+                                {% if navbar_notifications %}
+                                    {% for n in navbar_notifications %}
+                                        <li>
+                                            <a href="{{ n.link or '#' }}" class="notif-item"
+                                               onclick="notifMarkRead(event, {{ n.id }}, '{{ n.link or '' }}')">
+                                                <span class="notif-icon {{ 'unread' if not n.is_read else 'read' }}">
+                                                    <i class="bi {{ n.icon or 'bi-bell' }}"></i>
+                                                </span>
+                                                <div style="flex:1;min-width:0;">
+                                                    <p class="notif-body-title">{{ n.title }}</p>
+                                                    <p class="notif-body-msg">{{ n.message }}</p>
+                                                    <p class="notif-body-time">{{ n.created_at.strftime('%d %b · %H:%M') }}</p>
+                                                </div>
+                                                {% if not n.is_read %}
+                                                    <span class="notif-dot"></span>
+                                                {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                {% else %}
+                                    <li style="padding:40px 18px;text-align:center;">
+                                        <i class="bi bi-bell-slash" style="font-size:2rem;color:var(--border);"></i>
+                                        <p style="font-size:.75rem;font-weight:600;color:var(--ink-muted);margin-top:10px;">
+                                            No notifications yet</p>
+                                    </li>
+                                {% endif %}
+                            </ul>
+
+                            <div class="notif-footer">
+                                <a href="{{ url_for('notifications.all_notifications') }}">View all notifications →</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="icon-btn" aria-label="Notifications">
+                            <i class="bi bi-bell"></i>
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Wishlist -->
+                <a href="{{ url_for('wishlist.view') }}" class="icon-btn" aria-label="Wishlist">
+                    <i class="bi bi-heart"></i>
+                    {% if current_user.is_authenticated and wishlist_count > 0 %}
+                        <span class="badge">{{ wishlist_count }}</span>
+                    {% endif %}
+                </a>
+
+                <!-- Cart -->
+                <a href="{{ url_for('cart.cart') }}" class="icon-btn" aria-label="Cart">
+                    <i class="bi bi-bag"></i>
+                    {% if cart_count > 0 %}
+                        <span class="badge">{{ cart_count }}</span>
+                    {% endif %}
+                </a>
+
+                <!-- Auth / User (desktop) -->
+                <div class="hidden lg:flex items-center"
+                     style="gap:8px;margin-left:10px;padding-left:14px;border-left:1px solid var(--border);">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_admin %}
+                            <a href="{{ url_for('admin.dashboard') }}" class="admin-pill">Admin</a>
+                        {% endif %}
+                        <a href="{{ url_for('users.order_history') }}" class="btn-ghost">My Orders</a>
+                        <form method="POST" action="{{ url_for('auth.logout') }}" class="inline">
+                            <button type="submit" class="btn-ghost" style="cursor:pointer;font-family:inherit;">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="btn-ghost">Sign in</a>
+                        <a href="{{ url_for('auth.register') }}" class="btn-primary">Get Started</a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile toggle -->
+                <button class="menu-toggle lg:hidden" id="mobileMenuToggle"
+                        aria-label="Open navigation menu"
+                        aria-controls="mobileDrawer"
+                        aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!--  MAIN  -->
+<main class="site-main">
+    {% block content %}{% endblock %}
+</main>
+
+<!--  FOOTER  -->
+<footer class="site-footer">
+    <div style="max-width:88rem;margin:0 auto;padding:0 20px;">
+
+        {#  Top grid: brand + nav columns  #}
+        <div style="display:grid;grid-template-columns:1fr;gap:40px;padding:56px 0 48px;" class="footer-top-grid">
+
+            {# Brand column #}
+            <div style="grid-column:span 2 / span 2;">
+                <div class="footer-logo">ShopHub<span style="color:var(--indigo);">.</span></div>
+                <p class="footer-tagline">
+                    Professional gear for professional users.<br>
+                    Built with precision, delivered with speed.
+                </p>
+
+                {# Trust badges #}
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;">
+                    {% for icon, label in [
+                        ('bi-shield-check', 'Secure'),
+                        ('bi-truck',        'Fast Delivery'),
+                        ('bi-arrow-repeat', '30-day Returns'),
+                    ] %}
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:.6875rem;font-weight:700;
+                                 color:rgba(255,255,255,.6);background:rgba(255,255,255,.06);
+                                 border:1px solid rgba(255,255,255,.1);padding:5px 10px;border-radius:99px;">
+                        <i class="bi {{ icon }}" style="color:var(--indigo-light,#818CF8);"></i>
+                        {{ label }}
+                    </span>
+                    {% endfor %}
+                </div>
+
+                {# QR code — kept for mobile app download #}
+                <div style="margin-top:28px;">
+                    <p style="font-size:.6875rem;font-weight:700;color:rgba(255,255,255,.3);
+                               text-transform:uppercase;letter-spacing:.1em;margin:0 0 10px;">Scan to get our app</p>
+                    <img src="{{ url_for('static', filename='img/qr_code_app.png') }}"
+                         alt="Download ShopHub app"
+                         style="width:72px;border-radius:8px;border:1px solid rgba(255,255,255,.12);display:block;">
+                </div>
+            </div>
+
+            {# Explore column — real routes #}
+            <div>
+                <p class="footer-heading">Shop</p>
+                <a href="{{ url_for('products.products_list') }}" class="footer-link">All Products</a>
+                <a href="{{ url_for('products.products_list') }}" class="footer-link">New Arrivals</a>
+                {% for cat in all_categories[:6] %}
+                    <a href="{{ url_for('categories.category_detail', slug=cat.slug) }}"
+                       class="footer-link">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+
+            {# Account column — real routes #}
+            <div>
+                <p class="footer-heading">Account</p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('users.order_history') }}" class="footer-link">My Orders</a>
+                    <a href="{{ url_for('wishlist.view') }}" class="footer-link">My Wishlist</a>
+                    <a href="{{ url_for('cart.cart') }}" class="footer-link">My Cart</a>
+                    <a href="{{ url_for('notifications.all_notifications') }}" class="footer-link">Notifications</a>
+                    <a href="{{ url_for('auth.logout') }}"
+                       class="footer-link"
+                       onclick="event.preventDefault();document.getElementById('footer-logout-form').submit();">
+                        Sign Out
+                    </a>
+                    <form id="footer-logout-form" method="POST" action="{{ url_for('auth.logout') }}"
+                          style="display:none;"></form>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="footer-link">Sign In</a>
+                    <a href="{{ url_for('auth.register') }}" class="footer-link">Create Account</a>
+                {% endif %}
+            </div>
+
+            {# Help column — real routes #}
+            <div>
+                <p class="footer-heading">Help</p>
+                <a href="{{ url_for('support.support') }}" class="footer-link">Contact Support</a>
+                <a href="{{ url_for('orders.checkout') }}" class="footer-link">Track My Order</a>
+                <a href="{{ url_for('support.support') }}" class="footer-link">Returns & Exchange</a>
+                <a href="{{ url_for('support.support') }}" class="footer-link">FAQs</a>
+                {% if current_user.is_authenticated and current_user.is_admin %}
+                    <a href="{{ url_for('admin.dashboard') }}"
+                       class="footer-link" style="color:var(--indigo-light,#818CF8);">
+                        <i class="bi bi-speedometer2"></i> Admin Dashboard
+                    </a>
+                {% endif %}
+            </div>
+
+            {# Connect column — contact + socials #}
+            <div>
+                <p class="footer-heading">Connect</p>
+                <a href="mailto:ecshop420@gmail.com" class="footer-link"
+                   style="display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-envelope" style="width:14px;text-align:center;"></i>
+                    shophub168@gmail.com
+                </a>
+                <a href="tel:+85515430654" class="footer-link"
+                   style="display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-phone-alt" style="width:14px;text-align:center;"></i>
+                    015 430 654
+                </a>
+                <a href="{{ url_for('support.support') }}" class="footer-link"
+                   style="display:flex;align-items:center;gap:8px;">
+                    <i class="bi bi-chat-dots" style="width:14px;text-align:center;"></i>
+                    Live Chat Support
+                </a>
+
+                {# Social icons #}
+                <div style="display:flex;gap:8px;margin-top:20px;">
+                    <a href="https://www.facebook.com/share/1AcVnxo3y8/?mibextid=wwXIfr" target="_blank" rel="noopener"
+                       class="footer-social" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/hourzzhourzz?igsh=MTg2cnVubXg3dG40bQ%3D%3D&utm_source=qr" target="_blank" rel="noopener"
+                       class="footer-social" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@lyhourmeng99?_r=1&_t=ZS-95Ue9EWHvTV" target="_blank" rel="noopener"
+                       class="footer-social" aria-label="TikTok">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+        {# /footer-top-grid #}
+
+        {#  Newsletter strip  #}
+        <div style="padding:28px 32px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+                    border-radius:16px;margin-bottom:40px;display:flex;flex-wrap:wrap;
+                    align-items:center;justify-content:space-between;gap:20px;">
+            <div>
+                <p style="font-size:1rem;font-weight:700;color:#fff;margin:0 0 4px;">
+                    Stay in the loop
+                </p>
+                <p style="font-size:.8125rem;color:rgba(255,255,255,.45);margin:0;">
+                    New drops, exclusive deals, and restocks — straight to your inbox.
+                </p>
+            </div>
+            <form action="{{ url_for('support.support') }}" method="GET"
+                  style="display:flex;gap:8px;flex-wrap:wrap;flex:1;max-width:440px;min-width:260px;">
+                <input type="email" name="email" placeholder="your@email.com"
+                       style="flex:1;min-width:180px;background:rgba(255,255,255,.07);
+                              border:1px solid rgba(255,255,255,.12);border-radius:10px;
+                              padding:11px 16px;font-size:.875rem;color:#fff;outline:none;
+                              font-family:inherit;transition:border-color .2s;"
+                       onfocus="this.style.borderColor='var(--indigo)'"
+                       onblur="this.style.borderColor='rgba(255,255,255,.12)'"
+                       required>
+                <button type="submit"
+                        style="background:var(--indigo,#4F46E5);color:#fff;border:none;
+                               border-radius:10px;padding:11px 22px;font-size:.875rem;
+                               font-weight:700;cursor:pointer;transition:background .2s;
+                               font-family:inherit;white-space:nowrap;"
+                        onmouseover="this.style.background='#3730A3'"
+                        onmouseout="this.style.background='var(--indigo,#4F46E5)'">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+
+        {#  Bottom bar  #}
+        <hr class="footer-divider">
+
+        <div style="display:flex;flex-wrap:wrap;align-items:center;
+                    justify-content:space-between;gap:16px;padding-bottom:32px;">
+
+            <span style="font-size:.75rem;color:rgba(255,255,255,.35);">
+                &copy; 2015–2026 ShopHub. All rights reserved.
+            </span>
+
+            {# Legal links #}
+            <div style="display:flex;flex-wrap:wrap;gap:16px;">
+                <a href="{{ url_for('support.support') }}"
+                   style="font-size:.6875rem;color:rgba(255,255,255,.35);text-decoration:none;
+                          transition:color .2s;"
+                   onmouseover="this.style.color='rgba(255,255,255,.8)'"
+                   onmouseout="this.style.color='rgba(255,255,255,.35)'">Privacy Policy</a>
+                <a href="{{ url_for('support.support') }}"
+                   style="font-size:.6875rem;color:rgba(255,255,255,.35);text-decoration:none;
+                          transition:color .2s;"
+                   onmouseover="this.style.color='rgba(255,255,255,.8)'"
+                   onmouseout="this.style.color='rgba(255,255,255,.35)'">Terms of Service</a>
+                <a href="{{ url_for('support.support') }}"
+                   style="font-size:.6875rem;color:rgba(255,255,255,.35);text-decoration:none;
+                          transition:color .2s;"
+                   onmouseover="this.style.color='rgba(255,255,255,.8)'"
+                   onmouseout="this.style.color='rgba(255,255,255,.35)'">Cookie Policy</a>
+            </div>
+
+            {# Payment methods #}
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span style="font-size:.6875rem;color:rgba(255,255,255,.3);
+                             text-transform:uppercase;letter-spacing:.08em;">We Accept</span>
+                <img src="{{ url_for('static', filename='img/MasterCard.png') }}" alt="MasterCard"
+                     style="height:22px;opacity:.45;filter:grayscale(1);
+                            transition:var(--transition);cursor:default;"
+                     onmouseover="this.style.opacity='1';this.style.filter='none'"
+                     onmouseout="this.style.opacity='.45';this.style.filter='grayscale(1)'">
+                <img src="{{ url_for('static', filename='img/ABA.jpg') }}" alt="ABA Bank"
+                     style="height:22px;opacity:.45;filter:grayscale(1);
+                            transition:var(--transition);cursor:default;"
+                     onmouseover="this.style.opacity='1';this.style.filter='none'"
+                     onmouseout="this.style.opacity='.45';this.style.filter='grayscale(1)'">
+            </div>
+
+        </div>
+        {# /bottom bar #}
+    </div>
+</footer>
+
+{# Responsive grid layout for footer columns #}
+<style>
+    .footer-top-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    @media (min-width: 640px) {
+        .footer-top-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .footer-top-grid {
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr !important;
+        }
+
+        .footer-top-grid > div:first-child {
+            grid-column: span 1 / span 1 !important;
+        }
+    }
+</style>
+
+<!--  MOBILE DRAWER  -->
+<div class="mobile-overlay" id="mobileOverlay" aria-hidden="true"></div>
+
+<nav class="mobile-drawer" id="mobileDrawer" aria-label="Mobile navigation" aria-hidden="true">
+    <div class="drawer-header">
+        <span class="logo" style="font-size:1.25rem;">ShopHub<span class="logo-dot"></span></span>
+        <button class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <div class="drawer-body">
+        <!-- Mobile search -->
+        <div style="margin-bottom:24px;">
+            <form action="{{ url_for('products.search_product') }}" method="GET" role="search">
+                <div class="search-wrap" style="width:100%;">
+                    <i class="bi bi-search"></i>
+                    <input class="search-input" style="width:100%;"
+                           type="search" name="q" placeholder="Search products…" aria-label="Search products">
+                </div>
+            </form>
+        </div>
+
+        {% if current_user.is_authenticated and current_user.is_admin %}
+            <a href="{{ url_for('admin.dashboard') }}"
+               style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--indigo);color:#fff;border-radius:var(--radius-sm);font-size:.8125rem;font-weight:700;text-decoration:none;margin-bottom:20px;">
+                <i class="bi bi-speedometer2"></i> Admin Dashboard
+            </a>
+        {% endif %}
+
+        <p class="drawer-section-label">Navigation</p>
+        <a href="{{ url_for('main.home') }}" class="drawer-link">
+            Home <i class="bi bi-chevron-right"></i>
+        </a>
+        <a href="{{ url_for('products.products_list') }}" class="drawer-link">
+            All Products <i class="bi bi-chevron-right"></i>
+        </a>
+        <a href="{{ url_for('support.support') }}" class="drawer-link">
+            Support <i class="bi bi-chevron-right"></i>
+        </a>
+
+        <div style="margin-top:20px;">
+            <p class="drawer-section-label">Categories</p>
+            {% for category in all_categories %}
+                <a href="{{ url_for('categories.category_detail', slug=category.slug) }}" class="drawer-link">
+                    {{ category.name }} <i class="bi bi-chevron-right"></i>
+                </a>
+            {% endfor %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+            <div style="margin-top:20px;">
+                <p class="drawer-section-label">Account</p>
+                <a href="{{ url_for('users.order_history') }}" class="drawer-link">
+                    My Orders <i class="bi bi-chevron-right"></i>
+                </a>
+                <a href="{{ url_for('notifications.all_notifications') }}" class="drawer-link"
+                   style="position:relative;">
+                    Notifications
+                    {% if notif_count is defined and notif_count > 0 %}
+                        <span class="badge"
+                              style="position:static;margin-left:auto;background:var(--indigo);">{{ notif_count }}</span>
+                    {% else %}
+                        <i class="bi bi-chevron-right"></i>
+                    {% endif %}
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="drawer-footer">
+        {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('auth.logout') }}" style="width:100%;">
+                <button type="submit" class="btn-outline" style="width:100%;justify-content:center;">
+                    Logout ({{ current_user.first_name }})
+                </button>
+            </form>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}" class="btn-outline" style="width:100%;justify-content:center;">Sign
+                in</a>
+            <a href="{{ url_for('auth.register') }}" class="btn-primary" style="width:100%;justify-content:center;">Get
+                Started</a>
+        {% endif %}
+    </div>
+</nav>
+
+{% include 'share/script.html' %}
+
+<!--  FLASH TOASTS  -->
+<div class="toast-wrap" role="alert" aria-live="polite">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="toast {{ category }}">
+                    <span class="toast-icon">
+                        <i class="bi {{ 'bi-exclamation-circle' if category == 'danger' else 'bi-check-circle' }}"></i>
+                    </span>
+                    <div class="toast-text">
+                        <p class="toast-category">{{ category }}</p>
+                        <p class="toast-msg">{{ message }}</p>
+                    </div>
+                    <button onclick="this.closest('.toast').remove()" class="toast-close" aria-label="Dismiss">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+</body>
+</html>

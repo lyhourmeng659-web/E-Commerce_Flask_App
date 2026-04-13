@@ -1,0 +1,75 @@
+<div class="relative w-full mb-24 overflow-hidden" style="border-radius:20px;box-shadow:0 20px 60px rgba(15,23,42,.12);" id="heroSliderWrapper">
+
+    <!-- Slides -->
+    <div class="flex w-full overflow-x-hidden"
+         style="height:clamp(320px,55vw,680px);scroll-snap-type:x mandatory;"
+         id="heroSlider">
+        {% set slides = [
+            ('img/slider/slider1.jpg', 'Campaign 1'),
+            ('img/slider/slider2.jpg', 'Campaign 2'),
+            ('img/slider/slider3.jpg', 'Campaign 3')
+        ] %}
+        {% for src, alt in slides %}
+            <div class="flex-none w-full relative" style="scroll-snap-align:center;">
+                <img src="{{ url_for('static', filename=src) }}"
+                     style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 8s ease;"
+                     alt="{{ alt }}"
+                     {% if not loop.first %}loading="lazy"{% endif %}>
+                <!-- Gradient overlay -->
+                <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,23,42,.55) 0%,rgba(15,23,42,.15) 60%,transparent 100%);"></div>
+
+                <!-- Slide caption -->
+                <div style="position:absolute;bottom:0;left:0;padding:clamp(24px,4vw,56px);z-index:10;">
+                    <p style="font-size:.6875rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:10px;">
+                        New Arrival {{ loop.index }}
+                    </p>
+                    <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,4vw,3.5rem);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px;">
+                        Discover the<br>Latest Collection
+                    </h2>
+                    <a href="{{ url_for('products.products_list') }}"
+                       style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;font-size:.8125rem;font-weight:600;padding:11px 22px;border-radius:8px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.4);"
+                       onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+                       onmouseout="this.style.background='#4F46E5';this.style.transform='none'">
+                        Shop Now <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Prev / Next buttons -->
+    <button id="sliderPrev"
+            style="position:absolute;left:16px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(15,23,42,.15);font-size:1rem;color:#0F172A;transition:all .2s;z-index:20;backdrop-filter:blur(8px);opacity:0;"
+            class="slider-arrow"
+            aria-label="Previous slide">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+    <button id="sliderNext"
+            style="position:absolute;right:16px;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(15,23,42,.15);font-size:1rem;color:#0F172A;transition:all .2s;z-index:20;backdrop-filter:blur(8px);opacity:0;"
+            class="slider-arrow"
+            aria-label="Next slide">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+
+    <!-- Dots -->
+    <div id="sliderDots"
+         style="position:absolute;bottom:20px;right:clamp(24px,4vw,56px);display:flex;gap:6px;z-index:20;"
+         role="tablist" aria-label="Slider navigation">
+    </div>
+</div>
+
+<style>
+    #heroSliderWrapper:hover .slider-arrow { opacity: 1 !important; }
+    .slider-arrow:hover { background: #fff !important; transform: translateY(-50%) scale(1.08) !important; }
+    .dot-btn {
+        width: 24px; height: 4px;
+        border-radius: 2px;
+        border: none;
+        background: rgba(255,255,255,.4);
+        cursor: pointer;
+        transition: all .3s;
+        padding: 0;
+    }
+    .dot-btn.active { background: #fff; width: 36px; }
+</style>
+<script src="{{ url_for('static', filename="js/hero_slider.js") }}"></script>

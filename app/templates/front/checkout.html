@@ -1,0 +1,276 @@
+{% extends "master.html" %}
+{% block title %}Checkout - ShopHub{% endblock %}
+
+{% block content %}
+
+    {#  Progress Steps  #}
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:40px;">
+        {% for step, label in [('1','Cart'), ('2','Shipping'), ('3','Payment'), ('4','Confirm')] %}
+            <div style="display:flex;align-items:center;gap:0;">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+                    <div style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;background:{{ '#4F46E5' if loop.index <= 2 else '#E2E8F0' }};color:{{ '#fff' if loop.index <= 2 else '#94A3B8' }};">
+                        {{ step }}
+                    </div>
+                    <span style="font-size:.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:{{ '#4F46E5' if loop.index <= 2 else '#94A3B8' }};">{{ label }}</span>
+                </div>
+                {% if not loop.last %}
+                    <div style="width:clamp(32px,6vw,80px);height:2px;background:{{ '#4F46E5' if loop.index < 2 else '#E2E8F0' }};margin:0 8px;margin-bottom:22px;"></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    {#  Page Header  #}
+    <div style="margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;">
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+            Secure</p>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+            Checkout
+        </h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:32px;align-items:start;" class="co-layout">
+
+        {#  Left: Form  #}
+        <div>
+            <form method="POST" action="{{ url_for('orders.checkout') }}" novalidate>
+
+                {# Shipping #}
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:clamp(20px,4vw,36px);margin-bottom:20px;">
+                    <h2 style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:#0F172A;margin:0 0 24px;display:flex;align-items:center;gap:10px;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;font-weight:800;color:#4F46E5;">01</span>
+                        Shipping Information
+                    </h2>
+
+                    <div style="display:grid;grid-template-columns:1fr;gap:16px;" class="co-form-grid">
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="co-name-row">
+                            <div>
+                                <label for="first_name"
+                                       style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">First
+                                    Name <span style="color:#EF4444;">*</span></label>
+                                <input type="text" id="first_name" name="first_name"
+                                       value="{{ request.form.get('first_name', current_user.name.split()[0] if current_user.name else '') }}"
+                                       style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                       onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                       onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                       placeholder="John" required>
+                            </div>
+                            <div>
+                                <label for="last_name"
+                                       style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">Last
+                                    Name <span style="color:#EF4444;">*</span></label>
+                                <input type="text" id="last_name" name="last_name"
+                                       value="{{ request.form.get('last_name', '') }}"
+                                       style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                       onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                       onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                       placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="email"
+                                   style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">Email
+                                Address <span style="color:#EF4444;">*</span></label>
+                            <input type="email" id="email" name="email"
+                                   value="{{ request.form.get('email', current_user.email) }}"
+                                   style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                   onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                   onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                   placeholder="john@example.com" required>
+                        </div>
+
+                        <div>
+                            <label for="address"
+                                   style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">Street
+                                Address <span style="color:#EF4444;">*</span></label>
+                            <input type="text" id="address" name="address"
+                                   value="{{ request.form.get('address', '') }}"
+                                   style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                   onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                   onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                   placeholder="123 Main Street" required>
+                        </div>
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;" class="co-addr-row">
+                            <div>
+                                <label for="city"
+                                       style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">City
+                                    <span style="color:#EF4444;">*</span></label>
+                                <input type="text" id="city" name="city" value="{{ request.form.get('city', '') }}"
+                                       style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                       onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                       onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                       placeholder="Phnom Penh" required>
+                            </div>
+                            <div>
+                                <label for="zip_code"
+                                       style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">ZIP
+                                    Code <span style="color:#EF4444;">*</span></label>
+                                <input type="text" id="zip_code" name="zip_code"
+                                       value="{{ request.form.get('zip_code', '') }}"
+                                       style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                       onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                       onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                       placeholder="12000" required>
+                            </div>
+                            <div>
+                                <label for="country"
+                                       style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">Country
+                                    <span style="color:#EF4444;">*</span></label>
+                                <select id="country" name="country"
+                                        style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;cursor:pointer;appearance:none;"
+                                        onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                        onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                        required>
+                                    <option value="Cambodia">Cambodia</option>
+                                    <option value="United States">United States</option>
+                                    <option value="Singapore">Singapore</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Payment #}
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:clamp(20px,4vw,36px);margin-bottom:20px;">
+                    <h2 style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:#0F172A;margin:0 0 24px;display:flex;align-items:center;gap:10px;">
+                        <span style="width:28px;height:28px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.75rem;font-weight:800;color:#4F46E5;">02</span>
+                        Payment Method
+                    </h2>
+
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;" class="co-pay-grid">
+                        {% for method, label, icon in [('CARD','Credit Card','bi-credit-card'), ('PAYPAL','PayPal','bi-paypal'), ('COD','Cash on Delivery','bi-cash-stack')] %}
+                            <label style="position:relative;cursor:pointer;" class="pay-label">
+                                <input type="radio" name="payment_method" value="{{ method }}"
+                                       {% if loop.first %}checked{% endif %}
+                                       style="position:absolute;opacity:0;width:0;height:0;"
+                                       onchange="updatePayLabel(this)">
+                                <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;border:1.5px solid #E2E8F0;border-radius:12px;transition:all .2s;background:#F8FAFC;"
+                                     class="pay-box">
+                                    <i class="bi {{ icon }}"
+                                       style="font-size:1.4rem;color:#64748B;transition:color .2s;"></i>
+                                    <span style="font-size:.75rem;font-weight:700;color:#64748B;text-align:center;transition:color .2s;">{{ label }}</span>
+                                </div>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {# Security note #}
+                <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;margin-bottom:20px;">
+                    <i class="bi bi-shield-check" style="color:#059669;font-size:1.1rem;flex-shrink:0;"></i>
+                    <p style="font-size:.8125rem;font-weight:500;color:#065F46;margin:0;">
+                        Your payment information is encrypted and secure. We never store card details.
+                    </p>
+                </div>
+
+                <button type="submit"
+                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#4F46E5;color:#fff;font-size:1rem;font-weight:700;padding:16px;border-radius:12px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px rgba(79,70,229,.35);"
+                        onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+                        onmouseout="this.style.background='#4F46E5';this.style.transform='none'">
+                    <i class="bi bi-lock-fill"></i> Place Order
+                </button>
+            </form>
+        </div>
+
+        {#  Right: Order Summary  #}
+        <div style="position:sticky;top:90px;">
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:28px;box-shadow:0 4px 24px rgba(15,23,42,.06);">
+                <h3 style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#0F172A;margin:0 0 20px;padding-bottom:16px;border-bottom:1.5px solid #F1F5F9;">
+                    Order Summary
+                </h3>
+
+                {# Items list #}
+                <div style="display:flex;flex-direction:column;gap:14px;max-height:320px;overflow-y:auto;margin-bottom:20px;padding-right:4px;">
+                    {% for item in cart["items"] %}
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div style="width:52px;height:52px;border-radius:10px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;padding:6px;flex-shrink:0;">
+                                <img src="{{ url_for('static', filename=item.product.image) }}"
+                                     style="max-width:100%;max-height:100%;object-fit:contain;"
+                                     alt="{{ item.product.title }}">
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <p style="font-size:.8125rem;font-weight:700;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;">{{ item.product.title }}</p>
+                                <p style="font-size:.75rem;color:#94A3B8;font-weight:500;">Qty: {{ item.quantity }}</p>
+                            </div>
+                            <span style="font-size:.875rem;font-weight:700;color:#0F172A;flex-shrink:0;">${{ "%.2f"|format(item.subtotal) }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {# Totals #}
+                <div style="border-top:1.5px solid #F1F5F9;padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="font-size:.875rem;color:#64748B;font-weight:500;">Subtotal</span>
+                        <span style="font-size:.875rem;font-weight:700;color:#0F172A;">${{ "%.2f"|format(cart.subtotal) }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="font-size:.875rem;color:#64748B;font-weight:500;">Shipping</span>
+                        <span style="font-size:.875rem;font-weight:700;color:{{ '#059669' if cart.shipping == 0 else '#0F172A' }};">
+                        {{ 'Free' if cart.shipping == 0 else '$' ~ '%.2f'|format(cart.shipping) }}
+                    </span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1.5px solid #F1F5F9;margin-top:4px;">
+                        <span style="font-size:.9375rem;font-weight:700;color:#0F172A;">Total</span>
+                        <span style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#4F46E5;letter-spacing:-0.03em;">${{ "%.2f"|format(cart.total) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 1024px) {
+            .co-layout {
+                grid-template-columns: 1fr 380px !important;
+            }
+        }
+
+        @media (max-width: 639px) {
+            .co-name-row, .co-addr-row {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .co-pay-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .pay-label input:checked + .pay-box {
+            border-color: #4F46E5 !important;
+            background: #EEF2FF !important;
+        }
+
+        .pay-label input:checked + .pay-box i,
+        .pay-label input:checked + .pay-box span {
+            color: #4F46E5 !important;
+        }
+
+        .pay-box:hover {
+            border-color: #C7D2FE !important;
+        }
+    </style>
+
+    <script>
+        function updatePayLabel(input) {
+            document.querySelectorAll('.pay-box').forEach(b => {
+                b.style.borderColor = '#E2E8F0';
+                b.style.background = '#F8FAFC';
+                b.querySelectorAll('i, span').forEach(el => el.style.color = '#64748B');
+            });
+            const box = input.nextElementSibling;
+            if (box) {
+                box.style.borderColor = '#4F46E5';
+                box.style.background = '#EEF2FF';
+                box.querySelectorAll('i, span').forEach(el => el.style.color = '#4F46E5');
+            }
+        }
+
+        document.querySelectorAll('input[name=payment_method]:checked').forEach(r => updatePayLabel(r));
+    </script>
+
+{% endblock %}

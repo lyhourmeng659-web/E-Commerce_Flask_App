@@ -1,0 +1,46 @@
+<link rel="stylesheet" href="{{ url_for('static', filename="css/category_grid.css") }}">
+<div style="display:grid;grid-template-columns:repeat(1,1fr);gap:20px;" class="sm:grid-cols-2 lg:grid-cols-3-cats">
+    {% for category in all_categories %}
+        <a href="{{ url_for('categories.category_detail', slug=category.slug) }}"
+           class="cat-card"
+           aria-label="Browse {{ category.name }}">
+
+            <!-- Background watermark text -->
+            <div class="cat-bg-text">{{ category.name }}</div>
+
+            <!-- Content -->
+            <div style="position:absolute;inset:0;padding:28px 32px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;">
+
+                <!-- Top row -->
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                    <div class="cat-accent-line"></div>
+                    <span class="cat-count-chip">
+                        <i class="bi bi-box-seam" style="font-size:.6875rem;"></i>
+                        {{ category.product_count }} items
+                    </span>
+                </div>
+
+                <!-- Bottom -->
+                <div>
+                    <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin-bottom:10px;transition:color .25s;">
+                        {{ category.name }}
+                    </h2>
+                    <div class="cat-cta">
+                        View Collection <i class="bi bi-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cat-card-bar"></div>
+        </a>
+    {% endfor %}
+</div>
+
+<div style="display:flex;justify-content:flex-end;margin-top:16px;">
+    <a href="{{ url_for('categories.categories_list') }}"
+       style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748B;text-decoration:none;transition:color .2s;padding:6px 0;"
+       onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#64748B'">
+        View All Categories <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+

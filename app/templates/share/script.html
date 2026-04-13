@@ -1,0 +1,121 @@
+<!-- Tailwind CSS
+     CDN version is used here for development convenience.
+     For production: replace with a compiled Tailwind build using
+     the Tailwind CLI or PostCSS to tree-shake unused classes and reduce
+     bundle size from ~3MB CDN to ~10-15KB compiled output. -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<!-- Tailwind Theme Config
+     Extends the default Tailwind theme with custom brand colors and fonts.
+     Must come AFTER the Tailwind CDN script so tailwind.config is available.
+     These values map to utility classes used throughout all templates:
+       - bg-CoBlack, text-CoBlack → #000000
+       - text-CoRed, border-CoRed → #d0021b
+       - bg-CodGray               → #f4f4f4 (light input backgrounds) -->
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    CoBlack: '#000000',
+                    CoRed: '#d0021b',
+                    CodGray: '#f4f4f4'
+                },
+                fontFamily: {
+                    // System font stack — loads instantly with no external font request
+                    sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'Arial', 'sans-serif'],
+                    black: ['"Arial Black"', 'sans-serif']
+                },
+                keyframes: {
+                    // Slide-in animation for flash notification toasts
+                    'bounce-in': {
+                        '0%': {opacity: '0', transform: 'translateY(20px)'},
+                        '60%': {opacity: '1', transform: 'translateY(-4px)'},
+                        '100%': {transform: 'translateY(0)'}
+                    }
+                },
+                animation: {
+                    // Used on flash message divs: class="animate-bounce-in"
+                    'bounce-in': 'bounce-in 0.4s ease-out forwards'
+                }
+            }
+        }
+    }
+</script>
+
+
+<!-- Notification bell JS -->
+<script>
+    (function () {
+        const btn = document.getElementById('notifBellBtn');
+        const dropdown = document.getElementById('notifDropdown');
+        if (!btn || !dropdown) return;
+
+        // Toggle dropdown
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const opening = dropdown.classList.contains('hidden');
+            dropdown.classList.toggle('hidden', !opening);
+            btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+            // Stop badge pulse when dropdown opens
+            if (opening) {
+                const badge = document.getElementById('notifBadge');
+                if (badge) badge.classList.remove('animate-pulse');
+            }
+        });
+
+        // Close on outside click
+        document.addEventListener('click', function (e) {
+            const wrapper = document.getElementById('notifBellWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                dropdown.classList.add('hidden');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    })();
+
+    /**
+     * notifMarkRead(event, notifId, link)
+     * Called when a notification item is clicked.
+     * Marks as read via AJAX, then navigates to link (if any).
+     * Decrements the badge count live without reloading the page.
+     */
+    function notifMarkRead(event, notifId, link) {
+        event.preventDefault();
+
+        fetch('/notifications/' + notifId + '/read', {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        }).then(function (res) {
+            if (res.ok) {
+                // Decrement badge
+                const badge = document.getElementById('notifBadge');
+                if (badge) {
+                    let count = parseInt(badge.textContent.replace('+', '')) || 1;
+                    count -= 1;
+                    if (count <= 0) {
+                        badge.remove();
+                    } else {
+                        badge.textContent = count > 9 ? '9+' : count;
+                        badge.classList.remove('animate-pulse');
+                    }
+                }
+            }
+        }).catch(function () {
+        }).finally(function () {
+            // Navigate after AJAX completes (or fails gracefully)
+            if (link && link !== '') {
+                window.location.href = link;
+            }
+        });
+    }
+</script>

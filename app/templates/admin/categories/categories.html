@@ -1,0 +1,85 @@
+{% extends "master.html" %}
+{% block title %}Categories — Admin{% endblock %}
+{% block content %}
+
+    <div class="adm-page-header">
+        <div>
+            <p class="adm-eyebrow">Admin</p>
+            <h1 class="adm-h1">Categories</h1>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <a href="{{ url_for('admin.dashboard') }}" class="adm-btn-outline"><i class="bi bi-arrow-left"></i>
+                Dashboard</a>
+            <a href="{{ url_for('admin.create_category') }}" class="adm-btn-primary"><i class="bi bi-plus-lg"></i> New
+                Category</a>
+        </div>
+    </div>
+
+    <div class="adm-card">
+        {% if categories %}
+            <div style="overflow-x:auto;">
+                <table class="adm-table" style="min-width:520px;">
+                    <thead>
+                    <tr>
+                        <th class="adm-th" style="text-align:left;">Name</th>
+                        <th class="adm-th" style="text-align:left;">Slug</th>
+                        <th class="adm-th" style="text-align:left;">Description</th>
+                        <th class="adm-th" style="text-align:center;">Products</th>
+                        <th class="adm-th" style="text-align:center;">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for cat in categories %}
+                        <tr class="adm-tr">
+                            <td class="adm-td">
+                                <p style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0;">{{ cat.name }}</p>
+                            </td>
+                            <td style="padding:13px 14px;font-size:.8125rem;color:#94A3B8;font-family:monospace;">{{ cat.slug }}</td>
+                            <td style="padding:13px 14px;font-size:.8125rem;color:#64748B;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cat.description or '—' }}</td>
+                            <td style="padding:13px 14px;text-align:center;">
+                        <span class="adm-pill"
+                              style="color:#4F46E5;background:#EEF2FF;border:1px solid #C7D2FE;font-size:.6875rem;">
+                            {{ cat.product_count }} items
+                        </span>
+                            </td>
+                            <td style="padding:13px 20px;text-align:center;">
+                                <div style="display:flex;justify-content:center;gap:8px;">
+                                    <a href="{{ url_for('admin.edit_category', category_id=cat.id) }}"
+                                       style="display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:700;color:#4F46E5;background:#EEF2FF;padding:6px 12px;border-radius:8px;text-decoration:none;transition:background .2s;"
+                                       onmouseover="this.style.background='#C7D2FE'"
+                                       onmouseout="this.style.background='#EEF2FF'">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <form method="POST"
+                                          action="{{ url_for('admin.delete_category', category_id=cat.id) }}"
+                                          onsubmit="return confirm('Delete {{ cat.name }}? All its products will also be deleted.')">
+                                        <button type="submit"
+                                                style="display:inline-flex;align-items:center;gap:5px;font-size:.75rem;font-weight:700;color:#EF4444;background:#FEF2F2;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;transition:background .2s;"
+                                                onmouseover="this.style.background='#FECACA'"
+                                                onmouseout="this.style.background='#FEF2F2'">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div style="padding:60px;text-align:center;">
+                <div style="width:64px;height:64px;border-radius:16px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <i class="bi bi-grid" style="font-size:2rem;color:#4F46E5;"></i>
+                </div>
+                <p style="font-size:.875rem;font-weight:600;color:#94A3B8;margin:0 0 16px;">No categories yet.</p>
+                <a href="{{ url_for('admin.create_category') }}" class="adm-btn-primary">
+                    <i class="bi bi-plus-lg"></i> Add First Category
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% include 'admin/_shared_admin_css.html' ignore missing %}
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/admin_categories.css") }}">
+{% endblock %}

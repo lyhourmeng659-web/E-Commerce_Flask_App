@@ -1,0 +1,51 @@
+{% extends "master.html" %}
+{% block title %}500 Server Error - ShopHub{% endblock %}
+
+{% block content %}
+<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden;">
+
+    <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Outfit',sans-serif;font-size:clamp(8rem,20vw,16rem);font-weight:900;color:#FEF2F2;pointer-events:none;user-select:none;white-space:nowrap;z-index:0;letter-spacing:-0.05em;" aria-hidden="true">500</span>
+
+    <div style="position:relative;z-index:1;">
+        <div style="width:72px;height:72px;border-radius:20px;background:#FEF2F2;border:1.5px solid #FECACA;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;animation:wobble 3s ease-in-out infinite;">
+            <i class="bi bi-exclamation-triangle-fill" style="font-size:2rem;color:#EF4444;"></i>
+        </div>
+
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#EF4444;margin-bottom:12px;">Error 500</p>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin-bottom:12px;">
+            Something Went Wrong
+        </h1>
+        <p style="font-size:.9375rem;color:#64748B;font-weight:500;max-width:380px;margin:0 auto 36px;line-height:1.7;">
+            Our servers hit an unexpected error. We've been notified and are working on a fix. Please try again in a moment.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:28px;">
+            <button type="button" onclick="window.location.reload()"
+                    style="display:inline-flex;align-items:center;gap:8px;background:#EF4444;color:#fff;font-size:.9375rem;font-weight:700;padding:13px 28px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(239,68,68,.3);"
+                    onmouseover="this.style.background='#DC2626'" onmouseout="this.style.background='#EF4444'">
+                <i class="bi bi-arrow-clockwise"></i> Try Again
+            </button>
+            <a href="/"
+               style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0F172A;border:1.5px solid #E2E8F0;font-size:.9375rem;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;transition:all .2s;"
+               onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+               onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#0F172A'">
+                <i class="bi bi-house"></i> Go Home
+            </a>
+        </div>
+
+        <p style="font-size:.75rem;color:#CBD5E1;font-weight:600;letter-spacing:.06em;text-transform:uppercase;">
+            Error logged · {{ now.strftime('%H:%M:%S') if now else '—' }}
+        </p>
+    </div>
+</div>
+
+<style>
+    @keyframes wobble {
+        0%, 100% { transform: rotate(0deg); }
+        20% { transform: rotate(-4deg); }
+        40% { transform: rotate(4deg); }
+        60% { transform: rotate(-2deg); }
+        80% { transform: rotate(2deg); }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,19 @@
+<!-- Reconnect to external CDN origins early to speed up DNS resolution
+     and TLS handshake before the browser parses the link tags below -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Site favicon — shown in browser tab -->
+<link rel="icon"
+      href="{{ url_for('static', filename='img/icon-website.png') }}?v=2"
+      type="image/png">
+
+<!-- Global custom CSS — animations, scrollbar styling, and any overrides
+     that can't be achieved with Tailwind utility classes alone -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">

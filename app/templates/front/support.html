@@ -1,0 +1,151 @@
+{% extends "master.html" %}
+{% block title %}Contact Support - ShopHub{% endblock %}
+
+{% block content %}
+
+    {#  Page Header  #}
+    <div style="margin-bottom:40px;padding-bottom:24px;border-bottom:1.5px solid #F1F5F9;">
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:8px;">
+            Help Center</p>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0 0 10px;">
+            Contact Support
+        </h1>
+        <p style="font-size:.9375rem;color:#64748B;font-weight:500;max-width:480px;margin:0;">
+            We're here to help. Send us a message and we'll get back to you within 24 hours.
+        </p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:32px;" class="sup-layout">
+
+        {#  Contact Form  #}
+        <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:clamp(24px,4vw,40px);">
+            <h2 style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:700;color:#0F172A;margin-bottom:28px;display:flex;align-items:center;gap:10px;">
+            <span style="width:36px;height:36px;border-radius:10px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="bi bi-chat-dots" style="color:#4F46E5;font-size:1rem;"></i>
+            </span>
+                Send a Message
+            </h2>
+
+            <form method="POST" action="{{ url_for('support.support') }}" novalidate>
+                <div style="display:grid;grid-template-columns:1fr;gap:20px;" class="sup-form-grid">
+
+                    <div style="display:grid;grid-template-columns:1fr;gap:20px;" class="sup-row">
+                        {# Name #}
+                        <div>
+                            <label for="name"
+                                   style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;letter-spacing:.02em;">
+                                Full Name <span style="color:#EF4444;">*</span>
+                            </label>
+                            <input type="text" id="name" name="name" value="{{ form.name if form else '' }}"
+                                   placeholder="Your full name"
+                                   style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 16px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                   onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                   onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                   required>
+                        </div>
+
+                        {# Email #}
+                        <div>
+                            <label for="email"
+                                   style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;letter-spacing:.02em;">
+                                Email Address <span style="color:#EF4444;">*</span>
+                            </label>
+                            <input type="email" id="email" name="email" value="{{ form.email if form else '' }}"
+                                   placeholder="you@example.com"
+                                   style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 16px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                                   onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                   onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                   required>
+                        </div>
+                    </div>
+
+                    {# Subject #}
+                    <div>
+                        <label for="subject"
+                               style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;letter-spacing:.02em;">
+                            Subject
+                        </label>
+                        <input type="text" id="subject" name="subject" value="{{ form.subject if form else '' }}"
+                               placeholder="e.g. Order issue, product question…"
+                               style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 16px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                               onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                               onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'">
+                    </div>
+
+                    {# Message #}
+                    <div>
+                        <label for="message"
+                               style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;letter-spacing:.02em;">
+                            Message <span style="color:#EF4444;">*</span>
+                        </label>
+                        <textarea id="message" name="message" rows="5"
+                                  placeholder="Describe your request in detail…"
+                                  style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 16px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;resize:vertical;box-sizing:border-box;min-height:140px;font-family:inherit;"
+                                  onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                                  onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'"
+                                  required>{{ form.message if form else '' }}</textarea>
+                        <p style="font-size:.6875rem;color:#94A3B8;font-weight:500;margin-top:4px;text-align:right;">
+                            Minimum 10 characters required</p>
+                    </div>
+
+                    <button type="submit"
+                            style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:14px 32px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);align-self:flex-start;"
+                            onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+                            onmouseout="this.style.background='#4F46E5';this.style.transform='none'">
+                        <i class="bi bi-send"></i> Send Message
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {#  Contact Info  #}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {# Info cards #}
+            {% for icon, color, bg, label, content, href in [
+            ('bi-geo-alt-fill', '#4F46E5', '#EEF2FF', 'Our Location', 'No. 86A, Street 110<br>Phnom Penh, Cambodia', None),
+            ('bi-telephone-fill', '#059669', '#ECFDF5', 'Phone', '015 430 654', 'tel:+85515430654'),
+            ('bi-clock-fill', '#D97706', '#FFFBEB', 'Business Hours', 'Mon–Fri: 09:00–18:00<br>Saturday: 09:00–12:00', None)
+        ] %}
+                <div style="display:flex;align-items:flex-start;gap:16px;background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:20px;">
+                    <div style="width:44px;height:44px;border-radius:12px;background:{{ bg }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="bi {{ icon }}" style="color:{{ color }};font-size:1.1rem;"></i>
+                    </div>
+                    <div>
+                        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94A3B8;margin-bottom:4px;">{{ label }}</p>
+                        {% if href %}
+                            <a href="{{ href }}"
+                               style="font-size:.9375rem;font-weight:600;color:#0F172A;text-decoration:none;transition:color .2s;"
+                               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#0F172A'">
+                                {{ content }}
+                            </a>
+                        {% else %}
+                            <p style="font-size:.9375rem;font-weight:600;color:#0F172A;margin:0;line-height:1.6;">{{ content | safe }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            {# Map #}
+            <div style="border-radius:14px;overflow:hidden;border:1.5px solid #E2E8F0;flex:1;min-height:220px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3908.77066063462!2d104.8911!3d11.5683!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTHCsDM0JzA1LjkiTiAxMDTCsDUzJzI4LjAiRQ!5e0!3m2!1sen!2skh!4v1700000000000!5m2!1sen!2skh"
+                        width="100%" height="100%" style="border:0;display:block;min-height:220px;" allowfullscreen=""
+                        loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 1024px) {
+            .sup-layout {
+                grid-template-columns: 1fr 380px !important;
+                gap: 32px !important;
+            }
+
+            .sup-row {
+                grid-template-columns: 1fr 1fr !important;
+            }
+        }
+    </style>
+
+{% endblock %}

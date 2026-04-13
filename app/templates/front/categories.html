@@ -1,0 +1,72 @@
+{% extends "master.html" %}
+{% block title %}All Collections - ShopHub{% endblock %}
+
+{% block content %}
+
+    {#  Page Header  #}
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/categories.css") }}">
+    <div style="margin-bottom:40px;padding-bottom:24px;border-bottom:1.5px solid #F1F5F9;">
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:8px;">
+            Browse</p>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;">
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+                All Collections
+            </h1>
+            <span style="font-size:.8125rem;font-weight:600;color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 14px;border-radius:99px;">
+            {{ categories.total }} categories
+        </span>
+        </div>
+    </div>
+
+    {% if categories.items %}
+        <div class="cat-grid">
+            {% for category in categories.items %}
+                <a href="{{ url_for('categories.category_detail', slug=category.slug) }}"
+                   class="cat-card" aria-label="Browse {{ category.name }}">
+                    <div class="cat-bg-text">{{ category.name }}</div>
+                    <div style="position:absolute;inset:0;padding:28px 32px;display:flex;flex-direction:column;justify-content:space-between;z-index:10;">
+                        <div style="display:flex;align-items:flex-start;justify-content:space-between;">
+                            <div class="cat-accent-line"></div>
+                            <span style="display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748B;background:#fff;border:1px solid #E2E8F0;padding:4px 10px;border-radius:99px;">
+                        <i class="bi bi-box-seam" style="font-size:.6875rem;"></i>
+                        {{ category.product_count }} items
+                    </span>
+                        </div>
+                        <div>
+                            <h2 style="font-family:'Outfit',sans-serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin-bottom:10px;">
+                                {{ category.name }}
+                            </h2>
+                            <div class="cat-cta">Explore Collection <i class="bi bi-arrow-right"></i></div>
+                        </div>
+                    </div>
+                    <div class="cat-card-bar"></div>
+                </a>
+            {% endfor %}
+        </div>
+
+        {#  Pagination  #}
+        {% if categories.has_prev or categories.has_next %}
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:48px;padding-top:32px;border-top:1.5px solid #F1F5F9;">
+                {% if categories.has_prev %}
+                    <a href="?page={{ categories.prev_num }}"
+                       style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:all .2s;background:#fff;"
+                       onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </a>
+                {% endif %}
+                <span style="display:inline-flex;align-items:center;justify-content:center;padding:9px 18px;border-radius:8px;background:#4F46E5;color:#fff;font-size:.875rem;font-weight:700;">
+            {{ categories.page }} / {{ categories.pages }}
+        </span>
+                {% if categories.has_next %}
+                    <a href="?page={{ categories.next_num }}"
+                       style="display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:1.5px solid #E2E8F0;border-radius:8px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:all .2s;background:#fff;"
+                       onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}

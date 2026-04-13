@@ -1,0 +1,220 @@
+{% extends "master.html" %}
+{% block title %}Order #{{ order.order_number }} — Admin{% endblock %}
+{% block content %}
+
+    {#  Header  #}
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;flex-wrap:wrap;">
+        <a href="{{ url_for('admin.orders') }}"
+           style="width:36px;height:36px;border-radius:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;display:flex;align-items:center;justify-content:center;color:#64748B;text-decoration:none;transition:all .2s;flex-shrink:0;"
+           onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+           onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div style="flex:1;min-width:0;">
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:4px;">
+                Admin · Order</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                #{{ order.order_number }}</h1>
+            <p style="font-size:.75rem;color:#94A3B8;margin:4px 0 0;">{{ order.created_at.strftime('%d %b %Y · %H:%M') }}</p>
+        </div>
+        {% if order.status != 'cancelled' %}
+            <a href="{{ url_for('orders.download_invoice', order_id=order.id) }}"
+               style="display:inline-flex;align-items:center;gap:7px;background:#fff;color:#4F46E5;border:1.5px solid #C7D2FE;font-size:.8125rem;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;transition:all .2s;flex-shrink:0;"
+               onmouseover="this.style.background='#EEF2FF'" onmouseout="this.style.background='#fff'">
+                <i class="bi bi-download"></i> Invoice PDF
+            </a>
+        {% endif %}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:20px;" class="od-grid">
+
+        {# Left column #}
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+            {# Line items #}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+                <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;">
+                    <h3 style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0;">Items</h3>
+                </div>
+                {% for item in order.items %}
+                    <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid #F8FAFC;">
+                        <div style="width:52px;height:52px;border-radius:10px;background:#F8FAFC;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;padding:6px;flex-shrink:0;">
+                            {% if item.product and item.product.image %}
+                                <img src="{{ url_for('static', filename=item.product.image) }}"
+                                     style="max-width:100%;max-height:100%;object-fit:contain;"
+                                     alt="{{ item.product_name }}">
+                            {% else %}
+                                <i class="bi bi-box" style="color:#CBD5E1;font-size:1.2rem;"></i>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <p style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.product_name }}</p>
+                            <p style="font-size:.75rem;color:#94A3B8;font-weight:500;margin:3px 0 0;">
+                                Qty {{ item.quantity }} · ${{ "%.2f"|format(item.price) }} each</p>
+                        </div>
+                        <span style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#0F172A;flex-shrink:0;">
+                    ${{ "%.2f"|format(item.price * item.quantity) }}
+                </span>
+                    </div>
+                {% endfor %}
+                <div style="padding:16px 20px;background:#F8FAFC;">
+                    <div style="display:flex;justify-content:space-between;font-size:.8125rem;color:#64748B;font-weight:600;margin-bottom:8px;">
+                        <span>Subtotal</span><span>${{ "%.2f"|format(order.subtotal) }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:.8125rem;font-weight:600;margin-bottom:10px;">
+                        <span style="color:#64748B;">Shipping</span>
+                        <span style="color:{{ '#059669' if order.is_free_shipping else '#0F172A' }};">{{ order.formatted_shipping }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:1rem;font-weight:800;padding-top:10px;border-top:1.5px solid #E2E8F0;">
+                        <span style="color:#0F172A;">Total</span>
+                        <span style="color:#4F46E5;">{{ order.formatted_total }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {# Customer & Shipping #}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+                <div style="padding:16px 20px;border-bottom:1.5px solid #F1F5F9;">
+                    <h3 style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0;">Customer & Shipping</h3>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;" class="cust-cols">
+                    <div style="padding:20px;border-right:1px solid #F1F5F9;">
+                        <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4F46E5;margin:0 0 10px;">
+                            Contact</p>
+                        <p style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0 0 4px;">{{ order.customer_name }}</p>
+                        <p style="font-size:.8125rem;color:#64748B;margin:0 0 4px;">{{ order.customer_email }}</p>
+                        <p style="font-size:.8125rem;color:#64748B;margin:0;text-transform:capitalize;">{{ order.payment_method }}</p>
+                    </div>
+                    <div style="padding:20px;">
+                        <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4F46E5;margin:0 0 10px;">
+                            Ship To</p>
+                        <p style="font-size:.8125rem;color:#64748B;line-height:1.8;margin:0;">
+                            {{ order.address }}<br>{{ order.city }}, {{ order.zip_code }}<br>{{ order.country }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Right column — Status panel #}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+            {% set sc = {
+            'pending':  ('#D97706','#FFFBEB','#FDE68A','bi-clock'),
+            'paid':     ('#4F46E5','#EEF2FF','#C7D2FE','bi-credit-card-fill'),
+            'shipped':  ('#7C3AED','#F5F3FF','#DDD6FE','bi-truck'),
+            'delivered':('#059669','#ECFDF5','#A7F3D0','bi-check-circle-fill'),
+            'cancelled':('#EF4444','#FEF2F2','#FECACA','bi-x-circle-fill')
+        } %}
+            {% set c = sc.get(order.status, sc['pending']) %}
+
+            {# Current status #}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:20px;">
+                <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin:0 0 12px;">
+                    Current Status</p>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div style="width:44px;height:44px;border-radius:12px;background:{{ c[1] }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="bi {{ c[3] }}" style="color:{{ c[0] }};font-size:1.2rem;"></i>
+                    </div>
+                    <span style="font-size:1rem;font-weight:800;color:{{ c[0] }};text-transform:capitalize;">{{ order.status }}</span>
+                </div>
+            </div>
+
+            {# Update status — custom dropdown #}
+            {% if order.status != 'cancelled' %}
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:20px;">
+                    <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin:0 0 14px;">
+                        Update Status</p>
+                    <form method="POST" action="{{ url_for('admin.update_order_status', order_id=order.id) }}"
+                          style="display:flex;flex-direction:column;gap:10px;" id="order-status-form">
+
+                        {# Hidden real select — submitted with form #}
+                        <select id="order-status-select" name="status"
+                                style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+                            {% for st in order_statuses %}
+                                <option value="{{ st }}" {{ 'selected' if order.status == st }}>{{ st|replace('_',' ')|title }}</option>
+                            {% endfor %}
+                        </select>
+
+                        {# Custom trigger #}
+                        <div id="order-status-trigger" tabindex="0" role="combobox"
+                             aria-haspopup="listbox" aria-expanded="false"
+                             style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:600;color:#0F172A;cursor:pointer;transition:all .2s;user-select:none;">
+                            <span id="order-status-label">{{ order.status|replace('_',' ')|title }}</span>
+                            <i class="bi bi-chevron-down" id="order-status-chevron"
+                               style="font-size:.75rem;color:#94A3B8;transition:transform .2s;flex-shrink:0;"></i>
+                        </div>
+
+                        {# Dropdown options #}
+                        <div id="order-status-listbox" role="listbox"
+                             style="display:none;position:absolute;z-index:200;left:0;right:0;margin-top:4px;background:#fff;border:1.5px solid #C7D2FE;border-radius:12px;box-shadow:0 8px 32px rgba(15,23,42,.12);overflow:hidden;max-height:260px;overflow-y:auto;">
+                            {% set status_icons = {'pending':'bi-clock','paid':'bi-credit-card','shipped':'bi-truck','delivered':'bi-check-circle','cancelled':'bi-x-circle','refunded':'bi-arrow-counterclockwise'} %}
+                            {% for st in order_statuses %}
+                                {% set pill = sc.get(st, sc['pending']) %}
+                                <div role="option" data-value="{{ st }}" data-label="{{ st|replace('_',' ')|title }}"
+                                     style="display:flex;align-items:center;gap:10px;padding:11px 16px;font-size:.9375rem;font-weight:500;color:#0F172A;cursor:pointer;transition:background .15s;{{ 'background:#EEF2FF;font-weight:700;' if order.status == st else '' }}"
+                                     onmouseover="this.style.background='#EEF2FF'"
+                                     onmouseout="this.style.background='{{ '#EEF2FF' if order.status == st else 'transparent' }}'">
+                            <span style="width:28px;height:28px;border-radius:7px;background:{{ pill[1] }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi {{ status_icons.get(st,'bi-circle') }}"
+                                   style="color:{{ pill[0] }};font-size:.8rem;"></i>
+                            </span>
+                                    <span>{{ st|replace('_',' ')|title }}</span>
+                                    {% if order.status == st %}
+                                        <i class="bi bi-check2"
+                                           style="color:#4F46E5;margin-left:auto;font-size:.875rem;"></i>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit"
+                                style="width:100%;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;transition:background .2s;box-shadow:0 2px 8px rgba(79,70,229,.3);"
+                                onmouseover="this.style.background='#3730A3'"
+                                onmouseout="this.style.background='#4F46E5'">
+                            <i class="bi bi-check2-circle"></i> Update Status
+                        </button>
+                    </form>
+
+                    {# Order flow guide #}
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid #F1F5F9;">
+                        <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin:0 0 10px;">
+                            Order Flow</p>
+                        {% for step, icon, col in [('pending','bi-clock','#94A3B8'),('paid','bi-credit-card','#4F46E5'),('shipped','bi-truck','#7C3AED'),('delivered','bi-check-circle-fill','#059669')] %}
+                            <div style="display:flex;align-items:center;gap:10px;padding:5px 0;opacity:{{ '1' if order.status == step else '0.35' }};">
+                                <i class="bi {{ icon }}"
+                                   style="color:{{ col }};font-size:.875rem;width:16px;text-align:center;"></i>
+                                <span style="font-size:.8125rem;font-weight:{{ '700' if order.status == step else '500' }};color:#0F172A;">{{ step|title }}</span>
+                                {% if order.status == step %}
+                                    <span style="margin-left:auto;font-size:.625rem;font-weight:700;background:{{ col }};color:#fff;padding:2px 8px;border-radius:99px;">Current</span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <div style="background:#FEF2F2;border:1.5px solid #FECACA;border-radius:14px;padding:20px;text-align:center;">
+                    <i class="bi bi-x-circle-fill"
+                       style="color:#EF4444;font-size:1.5rem;display:block;margin-bottom:8px;"></i>
+                    <p style="font-size:.875rem;font-weight:700;color:#991B1B;margin:0;">Order Cancelled</p>
+                    <p style="font-size:.75rem;color:#EF4444;margin:6px 0 0;">This order cannot be updated.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 1024px) {
+            .od-grid {
+                grid-template-columns:1fr 320px !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .cust-cols {
+                grid-template-columns:1fr !important;
+            }
+        }
+    </style>
+
+    <script src="{{ url_for("static", filename="js/order_update_status_dropdown.js") }}"></script>
+{% endblock %}

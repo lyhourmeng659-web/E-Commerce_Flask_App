@@ -1,0 +1,38 @@
+{% extends "master.html" %}
+{% block title %}403 Access Denied - ShopHub{% endblock %}
+
+{% block content %}
+<div style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden;">
+
+    {# Watermark #}
+    <span style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Outfit',sans-serif;font-size:clamp(8rem,20vw,16rem);font-weight:900;color:#F1F5F9;pointer-events:none;user-select:none;white-space:nowrap;z-index:0;letter-spacing:-0.05em;" aria-hidden="true">403</span>
+
+    <div style="position:relative;z-index:1;">
+        <div style="width:72px;height:72px;border-radius:20px;background:#EEF2FF;border:1.5px solid #C7D2FE;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+            <i class="bi bi-lock-fill" style="font-size:2rem;color:#4F46E5;"></i>
+        </div>
+
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#4F46E5;margin-bottom:12px;">Error 403</p>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin-bottom:12px;">
+            Access Denied
+        </h1>
+        <p style="font-size:.9375rem;color:#64748B;font-weight:500;max-width:380px;margin:0 auto 36px;line-height:1.7;">
+            You don't have permission to view this page. Please sign in with the correct account or return home.
+        </p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+            <a href="{{ url_for('auth.login') }}"
+               style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:13px 28px;border-radius:10px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+               onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </a>
+            <a href="{{ url_for('main.home') }}"
+               style="display:inline-flex;align-items:center;gap:8px;background:#fff;color:#0F172A;border:1.5px solid #E2E8F0;font-size:.9375rem;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;transition:all .2s;"
+               onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+               onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#0F172A'">
+                <i class="bi bi-house"></i> Go Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

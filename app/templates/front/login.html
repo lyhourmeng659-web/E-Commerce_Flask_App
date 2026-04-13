@@ -1,0 +1,74 @@
+{% extends "master.html" %}
+{% block title %}Sign In - ShopHub{% endblock %}
+
+{% block content %}
+    <div style="max-width:420px;margin:40px auto;">
+
+        {# Logo mark #}
+        <div style="text-align:center;margin-bottom:32px;">
+            <a href="{{ url_for('main.home') }}"
+               style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;text-decoration:none;letter-spacing:-0.04em;display:inline-flex;align-items:center;gap:4px;">
+                ShopHub<span
+                    style="width:8px;height:8px;background:#4F46E5;border-radius:50%;display:inline-block;margin-left:2px;"></span>
+            </a>
+            <p style="font-size:.8125rem;color:#94A3B8;font-weight:500;margin-top:8px;">Welcome back — sign in to your
+                account</p>
+        </div>
+
+        <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:clamp(24px,5vw,40px);box-shadow:0 4px 24px rgba(15,23,42,.06);">
+
+            <form action="{{ url_for('auth.login') }}" method="POST" novalidate>
+
+                <div style="margin-bottom:18px;">
+                    <label for="email"
+                           style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">Email
+                        Address</label>
+                    <input type="email" name="email" id="email" value="{{ email or '' }}" required
+                           placeholder="you@example.com"
+                           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                           onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                           onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'">
+                </div>
+
+                <div style="margin-bottom:18px;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <label for="password" style="font-size:.75rem;font-weight:700;color:#0F172A;">Password</label>
+                        <a href="{{ url_for('auth.forgot_password') }}"
+                           style="font-size:.75rem;font-weight:600;color:#4F46E5;text-decoration:none;transition:color .2s;"
+                           onmouseover="this.style.color='#3730A3'" onmouseout="this.style.color='#4F46E5'">
+                            Forgot password?
+                        </a>
+                    </div>
+                    <input type="password" name="password" id="password" required
+                           placeholder="••••••••"
+                           style="width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:500;color:#0F172A;outline:none;transition:all .2s;box-sizing:border-box;"
+                           onfocus="this.style.borderColor='#4F46E5';this.style.background='#fff';this.style.boxShadow='0 0 0 3px rgba(79,70,229,.1)'"
+                           onblur="this.style.borderColor='#E2E8F0';this.style.background='#F8FAFC';this.style.boxShadow='none'">
+                </div>
+
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
+                    <input type="checkbox" name="remember" id="remember"
+                           style="width:16px;height:16px;accent-color:#4F46E5;cursor:pointer;">
+                    <label for="remember" style="font-size:.8125rem;font-weight:500;color:#64748B;cursor:pointer;">Keep
+                        me signed in</label>
+                </div>
+
+                <button type="submit"
+                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:13px;border-radius:10px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+                        onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+                        onmouseout="this.style.background='#4F46E5';this.style.transform='none'">
+                    Sign In
+                </button>
+            </form>
+        </div>
+
+        <p style="text-align:center;font-size:.875rem;color:#64748B;font-weight:500;margin-top:20px;">
+            Don't have an account?
+            <a href="{{ url_for('auth.register') }}"
+               style="color:#4F46E5;font-weight:700;text-decoration:none;margin-left:4px;transition:color .2s;"
+               onmouseover="this.style.color='#3730A3'" onmouseout="this.style.color='#4F46E5'">
+                Create one →
+            </a>
+        </p>
+    </div>
+{% endblock %}

@@ -1,0 +1,198 @@
+{% extends "master.html" %}
+{% block title %}{{ product.title }} - ShopHub{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/product_details.css') }}">
+{% endblock %}
+
+{% block content %}
+
+    {#  Breadcrumb  #}
+    <nav style="display:flex;align-items:center;gap:6px;margin-bottom:36px;font-size:.75rem;font-weight:600;flex-wrap:wrap;"
+         aria-label="Breadcrumb">
+        <a href="{{ url_for('main.home') }}"
+           style="color:#94A3B8;text-decoration:none;transition:color .2s;"
+           onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#94A3B8'">Home</a>
+        <i class="bi bi-chevron-right" style="color:#CBD5E1;font-size:.625rem;"></i>
+        <a href="{{ url_for('categories.category_detail', slug=product.category.slug) }}"
+           style="color:#94A3B8;text-decoration:none;transition:color .2s;"
+           onmouseover="this.style.color='#4F46E5'"
+           onmouseout="this.style.color='#94A3B8'">{{ product.category.name }}</a>
+        <i class="bi bi-chevron-right" style="color:#CBD5E1;font-size:.625rem;"></i>
+        <span style="color:#0F172A;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+              aria-current="page">{{ product.title }}</span>
+    </nav>
+
+    {#  Product layout  #}
+    <div style="display:grid;grid-template-columns:1fr;gap:40px;" class="pd-layout">
+
+        {# Left — Image panel #}
+        <div style="position:relative;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:20px;display:flex;align-items:center;justify-content:center;padding:clamp(32px,5vw,64px);min-height:400px;overflow:hidden;"
+             class="pd-img-panel">
+            <img src="{{ url_for('static', filename=product.image) }}"
+                 style="max-width:100%;max-height:480px;object-fit:contain;transition:transform .8s cubic-bezier(.4,0,.2,1);z-index:1;position:relative;"
+                 class="pd-img" alt="{{ product.title }}">
+            <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(79,70,229,.06) 0%,transparent 70%);pointer-events:none;"></div>
+            {% if product.is_low_stock %}
+                <div style="position:absolute;top:16px;left:16px;z-index:10;">
+                <span style="display:inline-flex;align-items:center;gap:6px;background:#FEF2F2;border:1px solid #FECACA;color:#EF4444;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:99px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#EF4444;animation:pd-pulse 2s infinite;"></span>
+                    Limited Stock
+                </span>
+                </div>
+            {% endif %}
+            <div style="position:absolute;top:16px;right:16px;z-index:10;">
+                {% set in_wishlist = product.id in wishlist_ids %}
+                <form method="POST"
+                      action="{{ url_for('wishlist.remove' if in_wishlist else 'wishlist.add', product_id=product.id) }}">
+                    <button type="submit"
+                            style="width:44px;height:44px;border-radius:12px;background:#fff;border:1.5px solid {{ '#FECACA' if in_wishlist else '#E2E8F0' }};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;color:{{ '#EF4444' if in_wishlist else '#64748B' }};box-shadow:0 2px 8px rgba(15,23,42,.08);transition:all .2s;"
+                            onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+                            onmouseout="this.style.borderColor='{{ '#FECACA' if in_wishlist else '#E2E8F0' }}';this.style.color='{{ '#EF4444' if in_wishlist else '#64748B' }}'"
+                            aria-label="{{ 'Remove from' if in_wishlist else 'Add to' }} wishlist">
+                        <i class="bi {{ 'bi-heart-fill' if in_wishlist else 'bi-heart' }}"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {# Right — Product info #}
+        <div style="display:flex;flex-direction:column;gap:0;" class="pd-info">
+
+            <a href="{{ url_for('categories.category_detail', slug=product.category.slug) }}"
+               style="display:inline-flex;align-items:center;gap:6px;font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4F46E5;background:#EEF2FF;border:1px solid rgba(79,70,229,.15);padding:5px 12px;border-radius:99px;text-decoration:none;margin-bottom:16px;align-self:flex-start;transition:all .2s;"
+               onmouseover="this.style.background='#4F46E5';this.style.color='#fff'"
+               onmouseout="this.style.background='#EEF2FF';this.style.color='#4F46E5'">
+                {{ product.category.name }}
+            </a>
+
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin-bottom:20px;">
+                {{ product.title }}
+            </h1>
+
+            <div style="display:flex;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:24px;padding-bottom:24px;border-bottom:1.5px solid #F1F5F9;">
+            <span style="font-family:'Outfit',sans-serif;font-size:2rem;font-weight:800;color:#4F46E5;letter-spacing:-0.03em;">
+                {{ product.formatted_price }}
+            </span>
+                {% if product.is_in_stock %}
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:#059669;background:#ECFDF5;border:1px solid #A7F3D0;padding:5px 12px;border-radius:99px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#10B981;"></span>
+                    In Stock ({{ product.stock }} available)
+                </span>
+                {% else %}
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:#EF4444;background:#FEF2F2;border:1px solid #FECACA;padding:5px 12px;border-radius:99px;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#EF4444;"></span>
+                    Out of Stock
+                </span>
+                {% endif %}
+            </div>
+
+            <p style="font-size:.9375rem;color:#64748B;line-height:1.75;font-weight:500;margin-bottom:28px;">
+                {{ product.description or "Our professional-grade equipment is engineered for high-performance and durability. Experience the peak of the " ~ product.category.name ~ " collection." }}
+            </p>
+
+            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:16px;padding:24px;">
+                <form action="{{ url_for('cart.add_to_cart') }}" method="POST">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+                    {# Quantity stepper — custom, no native number input spin arrows #}
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+                        <label style="font-size:.8125rem;font-weight:700;color:#0F172A;letter-spacing:.02em;">
+                            Quantity
+                        </label>
+                        <div style="display:flex;align-items:center;border:1.5px solid #E2E8F0;border-radius:8px;overflow:hidden;background:#fff;">
+                            <button type="button" id="pd-qty-dec"
+                                    style="width:38px;height:38px;border:none;background:transparent;cursor:pointer;font-size:1.1rem;color:#64748B;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;"
+                                    onmouseover="this.style.background='#F1F5F9'"
+                                    onmouseout="this.style.background='transparent'"
+                                    {% if not product.is_in_stock %}disabled{% endif %}>
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <input type="hidden" id="pd-qty-val" name="quantity" value="1">
+                            <span id="pd-qty-display"
+                                  style="width:48px;text-align:center;border-left:1px solid #E2E8F0;border-right:1px solid #E2E8F0;font-size:.875rem;font-weight:700;color:#0F172A;padding:8px 0;display:block;line-height:22px;user-select:none;">
+                            1
+                        </span>
+                            {# data-max is read by product_qty.js — no Jinja needed inside the JS file #}
+                            <button type="button" id="pd-qty-inc"
+                                    data-max="{{ product.stock if product.is_in_stock else 0 }}"
+                                    style="width:38px;height:38px;border:none;background:transparent;cursor:pointer;font-size:1.1rem;color:#64748B;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;"
+                                    onmouseover="this.style.background='#F1F5F9'"
+                                    onmouseout="this.style.background='transparent'"
+                                    {% if not product.is_in_stock %}disabled{% endif %}>
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            {% if not product.is_in_stock %}disabled{% endif %}
+                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;font-size:.9375rem;font-weight:700;padding:15px 24px;border-radius:10px;border:none;cursor:{{ 'not-allowed' if not product.is_in_stock else 'pointer' }};background:{{ '#E2E8F0' if not product.is_in_stock else '#4F46E5' }};color:{{ '#94A3B8' if not product.is_in_stock else '#fff' }};transition:all .2s;box-shadow:{{ 'none' if not product.is_in_stock else '0 4px 16px rgba(79,70,229,.35)' }};"
+                            {% if product.is_in_stock %}
+                            onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+                            onmouseout="this.style.background='#4F46E5';this.style.transform='none'"
+                            {% endif %}>
+                        <i class="bi {{ 'bi-x-circle' if not product.is_in_stock else 'bi-bag-plus' }}"></i>
+                        {{ 'Currently Unavailable' if not product.is_in_stock else 'Add to Cart' }}
+                    </button>
+                </form>
+            </div>
+
+            <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;">
+            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:#64748B;background:#fff;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;">
+                <i class="bi bi-truck" style="color:#4F46E5;"></i> Free shipping over ${{ free_threshold }}
+            </span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:#64748B;background:#fff;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;">
+                <i class="bi bi-arrow-repeat" style="color:#4F46E5;"></i> 30-day returns
+            </span>
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:#64748B;background:#fff;border:1px solid #E2E8F0;padding:6px 12px;border-radius:8px;">
+                <i class="bi bi-shield-check" style="color:#4F46E5;"></i> Secure checkout
+            </span>
+            </div>
+        </div>
+    </div>
+
+    {#  Related Products  #}
+    {% if related_products %}
+        <div style="margin-top:80px;padding-top:40px;border-top:1.5px solid #F1F5F9;">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px;">
+                <div>
+                    <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                        You may also like</p>
+                    <h3 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                        Related Products</h3>
+                </div>
+                <a href="{{ url_for('categories.category_detail', slug=product.category.slug) }}"
+                   style="font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#64748B;text-decoration:none;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:color .2s;"
+                   onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#64748B'">
+                    View Category <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;" class="rel-grid">
+                {% for item in related_products %}
+                    <a href="{{ url_for('products.product_detail', product_id=item.id) }}"
+                       style="display:flex;flex-direction:column;background:#fff;border:1.5px solid #E2E8F0;border-radius:16px;overflow:hidden;text-decoration:none;transition:all .3s;"
+                       class="rel-card"
+                       onmouseover="this.style.borderColor='#4F46E5';this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px rgba(79,70,229,.12)'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.transform='none';this.style.boxShadow='none'">
+                        <div style="background:#F8FAFC;height:180px;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;position:relative;">
+                            <img src="{{ url_for('static', filename=item.image) }}"
+                                 style="max-width:100%;max-height:100%;object-fit:contain;transition:transform .5s;"
+                                 alt="{{ item.title }}" loading="lazy" class="rel-img">
+                            <div style="position:absolute;bottom:0;left:0;width:100%;height:3px;background:#4F46E5;transform:scaleX(0);transform-origin:left;transition:transform .3s;"
+                                 class="rel-bar"></div>
+                        </div>
+                        <div style="padding:16px;">
+                            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4F46E5;margin-bottom:4px;">{{ item.category.name }}</p>
+                            <h4 style="font-size:.875rem;font-weight:700;color:#0F172A;line-height:1.4;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">{{ item.title }}</h4>
+                            <p style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#0F172A;letter-spacing:-0.02em;">{{ item.formatted_price }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/product_qty.js') }}"></script>
+
+{% endblock %}

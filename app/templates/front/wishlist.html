@@ -1,0 +1,142 @@
+{% extends "master.html" %}
+{% block title %}Wishlist - ShopHub{% endblock %}
+
+{% block content %}
+
+    {#  Page Header  #}
+    <div style="margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                Saved Items</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+                My Wishlist
+            </h1>
+        </div>
+        {% if items %}
+            <span style="font-size:.8125rem;font-weight:600;color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 14px;border-radius:99px;">
+            {{ items|length }} item{{ 's' if items|length != 1 else '' }}
+        </span>
+        {% endif %}
+    </div>
+
+    {% if items %}
+        <div style="display:grid;grid-template-columns:repeat(1,1fr);gap:20px;" class="wl-grid">
+            {% for item in items %}
+                {% set product = item.product %}
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:16px;overflow:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);"
+                     class="wl-card"
+                     onmouseover="this.style.borderColor='#4F46E5';this.style.transform='translateY(-4px)';this.style.boxShadow='0 16px 48px rgba(79,70,229,.12)'"
+                     onmouseout="this.style.borderColor='#E2E8F0';this.style.transform='none';this.style.boxShadow='none'">
+
+                    {# Image #}
+                    <div style="position:relative;background:#F8FAFC;height:220px;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;">
+                        {% if product.image %}
+                            <img src="{{ url_for('static', filename=product.image) }}"
+                                 alt="{{ product.title }}"
+                                 style="max-width:100%;max-height:100%;object-fit:contain;transition:transform .6s cubic-bezier(.4,0,.2,1);"
+                                 class="wl-img">
+                        {% endif %}
+
+                        {# Remove button #}
+                        <form method="POST" action="{{ url_for('wishlist.remove', product_id=product.id) }}"
+                              style="position:absolute;top:12px;right:12px;z-index:10;">
+                            <button type="submit"
+                                    style="width:34px;height:34px;border-radius:8px;border:1.5px solid #E2E8F0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#94A3B8;font-size:.875rem;transition:all .2s;box-shadow:0 2px 8px rgba(15,23,42,.08);"
+                                    onmouseover="this.style.borderColor='#FECACA';this.style.color='#EF4444';this.style.background='#FEF2F2'"
+                                    onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#94A3B8';this.style.background='#fff'"
+                                    aria-label="Remove from wishlist">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </form>
+
+                        {# Out of stock overlay #}
+                        {% if not product.is_in_stock %}
+                            <div style="position:absolute;inset:0;background:rgba(255,255,255,.85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:5;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;color:#EF4444;background:#FEF2F2;border:1.5px solid #FECACA;padding:7px 14px;border-radius:99px;">
+                                <i class="bi bi-x-circle"></i> Out of Stock
+                            </span>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Body #}
+                    <div style="padding:18px;">
+                    <span style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4F46E5;display:block;margin-bottom:5px;">
+                        {{ product.category.name if product.category else 'General' }}
+                    </span>
+                        <h5 style="font-size:.9375rem;font-weight:700;color:#0F172A;line-height:1.4;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                            {{ product.title }}
+                        </h5>
+
+                        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid #F1F5F9;border-bottom:1px solid #F1F5F9;margin-bottom:14px;">
+                        <span style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#0F172A;letter-spacing:-0.02em;">
+                            {{ product.formatted_price }}
+                        </span>
+                            <a href="{{ url_for('products.product_detail', product_id=product.id) }}"
+                               style="font-size:.75rem;font-weight:600;color:#64748B;text-decoration:none;transition:color .2s;"
+                               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#64748B'">
+                                View details →
+                            </a>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            {% if product.is_in_stock %}
+                                <form action="{{ url_for('cart.add_to_cart') }}" method="POST">
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit"
+                                            style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#4F46E5;color:#fff;font-size:.875rem;font-weight:700;padding:11px;border-radius:8px;border:none;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(79,70,229,.25);"
+                                            onmouseover="this.style.background='#3730A3'"
+                                            onmouseout="this.style.background='#4F46E5'">
+                                        <i class="bi bi-bag-plus"></i> Add to Cart
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button disabled
+                                        style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:#F1F5F9;color:#94A3B8;font-size:.875rem;font-weight:700;padding:11px;border-radius:8px;border:none;cursor:not-allowed;">
+                                    <i class="bi bi-x-circle"></i> Unavailable
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;border:2px dashed #E2E8F0;border-radius:20px;background:#F8FAFC;text-align:center;">
+            <div style="width:80px;height:80px;border-radius:20px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+                <i class="bi bi-heart" style="font-size:2.25rem;color:#4F46E5;"></i>
+            </div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#0F172A;margin-bottom:8px;">
+                Wishlist is empty</h3>
+            <p style="font-size:.9375rem;color:#94A3B8;margin-bottom:28px;max-width:300px;font-weight:500;">
+                Save items, you love by clicking the heart icon on any product.
+            </p>
+            <a href="{{ url_for('products.products_list') }}"
+               style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:13px 28px;border-radius:10px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+               onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                <i class="bi bi-bag"></i> Browse Products
+            </a>
+        </div>
+    {% endif %}
+
+    <style>
+        @media (min-width: 640px) {
+            .wl-grid {
+                grid-template-columns:repeat(2, 1fr) !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .wl-grid {
+                grid-template-columns:repeat(4, 1fr) !important;
+            }
+        }
+
+        .wl-card:hover .wl-img {
+            transform: scale(1.07);
+        }
+    </style>
+
+{% endblock %}

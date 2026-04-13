@@ -1,0 +1,94 @@
+{% extends "master.html" %}
+{% block title %}{{ 'Edit' if category else 'New' }} Category — Admin{% endblock %}
+{% block content %}
+    <div style="max-width:600px;margin:0 auto;">
+
+        <nav style="display:flex;align-items:center;gap:6px;margin-bottom:24px;font-size:.75rem;font-weight:600;flex-wrap:wrap;">
+            <a href="{{ url_for('admin.dashboard') }}" style="color:#94A3B8;text-decoration:none;"
+               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#94A3B8'">Dashboard</a>
+            <i class="bi bi-chevron-right" style="color:#CBD5E1;font-size:.625rem;"></i>
+            <a href="{{ url_for('admin.categories') }}" style="color:#94A3B8;text-decoration:none;"
+               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#94A3B8'">Categories</a>
+            <i class="bi bi-chevron-right" style="color:#CBD5E1;font-size:.625rem;"></i>
+            <span style="color:#0F172A;">{{ 'Edit' if category else 'New' }}</span>
+        </nav>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+            <div>
+                <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                    Admin</p>
+                <h1 style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;letter-spacing:-0.03em;margin:0;">
+                    {{ 'Edit Category' if category else 'New Category' }}
+                </h1>
+            </div>
+            <a href="{{ url_for('admin.categories') }}"
+               style="display:inline-flex;align-items:center;gap:6px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:color .2s;"
+               onmouseover="this.style.color='#0F172A'" onmouseout="this.style.color='#64748B'">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+        <form method="POST"
+              action="{{ url_for('admin.edit_category', category_id=category.id) if category else url_for('admin.create_category') }}">
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:24px;">
+                    <label style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">
+                        Name <span style="color:#EF4444;">*</span>
+                    </label>
+                    <input type="text" name="name"
+                           value="{{ category.name if category else request.form.get('name','') }}"
+                           placeholder="e.g. Electronics"
+                           class="sh-input" required>
+                </div>
+
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:24px;">
+                    <label style="display:block;font-size:.75rem;font-weight:700;color:#0F172A;margin-bottom:6px;">
+                        Description <span style="font-size:.6875rem;font-weight:500;color:#94A3B8;">(optional)</span>
+                    </label>
+                    <textarea name="description" rows="3"
+                              placeholder="Short description of this category…"
+                              class="sh-input"
+                              style="resize:vertical;font-family:inherit;">{{ category.description if category else request.form.get('description','') }}</textarea>
+                </div>
+
+                <div style="display:flex;gap:12px;">
+                    <button type="submit"
+                            style="flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:14px;border-radius:10px;border:none;cursor:pointer;transition:background .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+                            onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                        <i class="bi bi-{{ 'check2-circle' if category else 'plus-circle' }}"></i>
+                        {{ 'Save Changes' if category else 'Create Category' }}
+                    </button>
+                    <a href="{{ url_for('admin.categories') }}"
+                       style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#64748B;border:1.5px solid #E2E8F0;font-size:.9375rem;font-weight:700;padding:14px 24px;border-radius:10px;text-decoration:none;transition:all .2s;"
+                       onmouseover="this.style.borderColor='#0F172A';this.style.color='#0F172A'"
+                       onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+                        Cancel
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .sh-input {
+            width: 100%;
+            background: #F8FAFC;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 11px 14px;
+            font-size: .9375rem;
+            font-weight: 500;
+            color: #0F172A;
+            outline: none;
+            transition: all .2s;
+            box-sizing: border-box;
+        }
+
+        .sh-input:focus {
+            border-color: #4F46E5;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, .1);
+        }
+    </style>
+{% endblock %}

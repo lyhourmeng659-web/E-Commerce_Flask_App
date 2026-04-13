@@ -1,0 +1,168 @@
+{% extends "master.html" %}
+{% block title %}Order History — E-Commerce Shop{% endblock %}
+
+{% block content %}
+
+    {#  Page Header  #}
+    <div style="margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;
+                display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">
+                Account
+            </p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);
+                        font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+                Order History
+            </h1>
+        </div>
+        <span style="font-size:.8125rem;font-weight:600;color:#94A3B8;background:#F8FAFC;
+                     border:1px solid #E2E8F0;padding:6px 14px;border-radius:99px;">
+            {{ orders|length }} order{{ 's' if orders|length != 1 else '' }}
+        </span>
+    </div>
+
+    {% if orders %}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+            {% for order in orders %}
+
+                {# Status colour config #}
+                {% set status_cfg = {
+                    'delivered': ('#059669','#ECFDF5','#A7F3D0','bi-check-circle-fill'),
+                    'shipped':   ('#4F46E5','#EEF2FF','#C7D2FE','bi-truck'),
+                    'paid':      ('#D97706','#FFFBEB','#FDE68A','bi-credit-card-fill'),
+                    'cancelled': ('#EF4444','#FEF2F2','#FECACA','bi-x-circle-fill'),
+                    'pending':   ('#64748B','#F1F5F9','#CBD5E1','bi-clock'),
+                } %}
+                {% set cfg = status_cfg.get(order.status, status_cfg['pending']) %}
+
+                <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:16px;
+                            overflow:hidden;transition:border-color .2s;"
+                     onmouseover="this.style.borderColor='#C7D2FE'"
+                     onmouseout="this.style.borderColor='#E2E8F0'">
+
+                    {#  Order header  #}
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+                                gap:12px;padding:16px 20px;background:#F8FAFC;border-bottom:1.5px solid #F1F5F9;">
+                        <div style="display:flex;flex-wrap:wrap;gap:24px;">
+                            <div>
+                                <p style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;
+                                          text-transform:uppercase;color:#94A3B8;margin-bottom:3px;">Order ID</p>
+                                <p style="font-size:.9375rem;font-weight:700;color:#0F172A;">
+                                    #{{ order.order_number or order.id }}
+                                </p>
+                            </div>
+                            <div>
+                                <p style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;
+                                          text-transform:uppercase;color:#94A3B8;margin-bottom:3px;">Date</p>
+                                <p style="font-size:.9375rem;font-weight:600;color:#0F172A;">
+                                    {{ order.created_at.strftime('%d %b %Y') }}
+                                </p>
+                            </div>
+                            <div>
+                                <p style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;
+                                          text-transform:uppercase;color:#94A3B8;margin-bottom:3px;">Total</p>
+                                <p style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#4F46E5;">
+                                    ${{ "%.2f"|format(order.total_amount) }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Status badge #}
+                        <span style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;
+                                     font-weight:700;color:{{ cfg[0] }};background:{{ cfg[1] }};
+                                     border:1px solid {{ cfg[2] }};padding:5px 12px;border-radius:99px;">
+                            <i class="bi {{ cfg[3] }}" style="font-size:.8rem;"></i>
+                            {{ order.status | replace('_',' ') | title }}
+                        </span>
+                    </div>
+
+                    {#  Line items  #}
+                    <div style="padding:0 20px;">
+                        {% for item in order.items %}
+                            <div style="display:flex;align-items:center;gap:14px;
+                                        padding:14px 0;border-bottom:1px solid #F8FAFC;">
+
+                                {# Product thumbnail #}
+                                <div style="width:52px;height:52px;border-radius:10px;background:#F8FAFC;
+                                            border:1px solid #E2E8F0;display:flex;align-items:center;
+                                            justify-content:center;padding:6px;flex-shrink:0;">
+                                    {% if item.product and item.product.image %}
+                                        <img src="{{ url_for('static', filename=item.product.image) }}"
+                                             style="max-width:100%;max-height:100%;object-fit:contain;"
+                                             alt="{{ item.product_name }}">
+                                    {% else %}
+                                        <i class="bi bi-box" style="color:#CBD5E1;font-size:1.2rem;"></i>
+                                    {% endif %}
+                                </div>
+
+                                <div style="flex:1;min-width:0;">
+                                    <p style="font-size:.9375rem;font-weight:700;color:#0F172A;
+                                              white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                        {{ item.product_name }}
+                                    </p>
+                                    <p style="font-size:.75rem;color:#94A3B8;font-weight:500;margin-top:2px;">
+                                        Qty {{ item.quantity }} · ${{ "%.2f"|format(item.price) }} each
+                                    </p>
+                                </div>
+
+                                <span style="font-family:'Outfit',sans-serif;font-size:1rem;
+                                             font-weight:700;color:#0F172A;flex-shrink:0;">
+                                    ${{ "%.2f"|format(item.price * item.quantity) }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {#  Order footer  #}
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+                                gap:12px;padding:12px 20px;background:#F8FAFC;border-top:1px solid #F1F5F9;">
+
+                        {# Shipping address #}
+                        <div style="display:flex;align-items:center;gap:6px;">
+                            <i class="bi bi-geo-alt" style="color:#94A3B8;font-size:.875rem;"></i>
+                            <span style="font-size:.8125rem;color:#64748B;font-weight:500;">
+                                {{ order.address }}, {{ order.city }}
+                            </span>
+                        </div>
+
+                        {# Download Invoice #}
+                        {% if order.status != 'cancelled' %}
+                            <a href="{{ url_for('orders.download_invoice', order_id=order.id) }}"
+                               style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;
+                                      font-weight:700;color:#4F46E5;text-decoration:none;transition:color .2s;"
+                               onmouseover="this.style.color='#3730A3'"
+                               onmouseout="this.style.color='#4F46E5'">
+                                <i class="bi bi-download"></i> Download Invoice
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    {% else %}
+        {#  Empty state  #}
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
+                    padding:80px 24px;border:2px dashed #E2E8F0;border-radius:20px;
+                    background:#F8FAFC;text-align:center;">
+            <div style="width:80px;height:80px;border-radius:20px;background:#EEF2FF;
+                        display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+                <i class="bi bi-bag" style="font-size:2.25rem;color:#4F46E5;"></i>
+            </div>
+            <h3 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;
+                        color:#0F172A;margin-bottom:8px;">No orders yet</h3>
+            <p style="font-size:.9375rem;color:#94A3B8;margin-bottom:28px;max-width:300px;font-weight:500;">
+                You haven't placed any orders yet. Start shopping!
+            </p>
+            <a href="{{ url_for('products.products_list') }}"
+               style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;
+                      font-size:.9375rem;font-weight:700;padding:13px 28px;border-radius:10px;
+                      text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+               onmouseover="this.style.background='#3730A3'"
+               onmouseout="this.style.background='#4F46E5'">
+                <i class="bi bi-bag"></i> Start Shopping
+            </a>
+        </div>
+    {% endif %}
+
+{% endblock %}

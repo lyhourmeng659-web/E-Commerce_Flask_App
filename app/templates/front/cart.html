@@ -1,0 +1,270 @@
+{% extends "master.html" %}
+{% block title %}Shopping Cart - ShopHub{% endblock %}
+
+{% block content %}
+
+{#  Page Header  #}
+<div style="margin-bottom:32px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+        <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:6px;">Your</p>
+        <h1 style="font-family:'Outfit',sans-serif;font-size:clamp(1.75rem,4vw,2.75rem);font-weight:800;color:#0F172A;line-height:1.1;letter-spacing:-0.03em;margin:0;">
+            Shopping Cart
+        </h1>
+    </div>
+    {% if cart.count > 0 %}
+        <span style="font-size:.8125rem;font-weight:600;color:#94A3B8;background:#F8FAFC;border:1px solid #E2E8F0;padding:6px 14px;border-radius:99px;">
+            {{ cart.count }} item{{ 's' if cart.count != 1 else '' }}
+        </span>
+    {% endif %}
+</div>
+
+{% if cart["items"] %}
+<div style="display:grid;grid-template-columns:1fr;gap:32px;align-items:start;" class="cart-layout">
+
+    {#  Items  #}
+    <div>
+        {# Desktop column headers #}
+        <div style="display:none;" class="cart-th">
+            <div style="display:grid;grid-template-columns:1fr 120px 140px 100px 40px;gap:16px;padding:0 16px 14px;border-bottom:1.5px solid #F1F5F9;margin-bottom:8px;">
+                <span style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;">Product</span>
+                <span style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;text-align:center;">Price</span>
+                <span style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;text-align:center;">Quantity</span>
+                <span style="font-size:.6875rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;text-align:right;">Subtotal</span>
+                <span></span>
+            </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;">
+            {% for item in cart["items"] %}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:16px;transition:border-color .2s;"
+                 class="cart-item-row"
+                 onmouseover="this.style.borderColor='#C7D2FE'"
+                 onmouseout="this.style.borderColor='#E2E8F0'">
+
+                <div style="display:flex;align-items:center;gap:16px;" class="cart-row-inner">
+
+                    {# Thumbnail #}
+                    <div style="width:80px;height:80px;flex-shrink:0;background:#F8FAFC;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:8px;">
+                        <img src="{{ url_for('static', filename=item.product.image) }}"
+                             alt="{{ item.product.title }}"
+                             style="max-width:100%;max-height:100%;object-fit:contain;">
+                    </div>
+
+                    {# Info #}
+                    <div style="flex:1;min-width:0;">
+                        <span style="font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4F46E5;display:block;margin-bottom:3px;">
+                            {{ item.product.category.name }}
+                        </span>
+                        <h5 style="font-size:.9375rem;font-weight:700;color:#0F172A;line-height:1.4;margin:0 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            <a href="{{ url_for('products.product_detail', product_id=item.product.id) }}"
+                               style="text-decoration:none;color:inherit;transition:color .2s;"
+                               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#0F172A'">
+                                {{ item.product.title }}
+                            </a>
+                        </h5>
+                        {% if item.product.is_low_stock %}
+                            <span style="font-size:.625rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#EF4444;background:#FEF2F2;border:1px solid #FECACA;padding:2px 8px;border-radius:99px;">
+                                Low Stock
+                            </span>
+                        {% endif %}
+                        {# Mobile-only price #}
+                        <p style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#0F172A;margin-top:6px;" class="cart-mobile-price">
+                            {{ item.product.formatted_price }}
+                        </p>
+                    </div>
+
+                    {# Desktop price #}
+                    <div style="width:100px;text-align:center;flex-shrink:0;" class="cart-desktop-only">
+                        <span style="font-size:.9375rem;font-weight:700;color:#0F172A;">{{ item.product.formatted_price }}</span>
+                    </div>
+
+                    {#  Quantity stepper — custom, no native spin arrows  #}
+                    <form method="POST" action="{{ url_for('cart.update_cart') }}"
+                          style="flex-shrink:0;" class="qty-form"
+                          id="qty-form-{{ item.product.id }}">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+
+                        {# Hidden real input — no spin arrows #}
+                        <input type="hidden" name="quantity"
+                               id="qty-hidden-{{ item.product.id }}"
+                               value="{{ item.quantity }}">
+
+                        <div style="display:flex;align-items:center;border:1.5px solid #E2E8F0;border-radius:8px;overflow:hidden;background:#F8FAFC;">
+                            {# Decrement #}
+                            <button type="button"
+                                    onclick="cartStep('{{ item.product.id }}', -1)"
+                                    style="width:34px;height:36px;border:none;background:transparent;cursor:pointer;font-size:1rem;color:#64748B;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;"
+                                    onmouseover="this.style.background='#EEF2FF';this.style.color='#4F46E5'"
+                                    onmouseout="this.style.background='transparent';this.style.color='#64748B'">
+                                <i class="bi bi-dash"></i>
+                            </button>
+
+                            {# Display span #}
+                            <span id="qty-display-{{ item.product.id }}"
+                                  style="width:40px;text-align:center;border-left:1px solid #E2E8F0;border-right:1px solid #E2E8F0;background:transparent;font-size:.875rem;font-weight:700;color:#0F172A;padding:8px 0;display:block;line-height:20px;user-select:none;">
+                                {{ item.quantity }}
+                            </span>
+
+                            {# Increment #}
+                            <button type="button"
+                                    onclick="cartStep('{{ item.product.id }}', 1)"
+                                    data-max="{{ item.product.stock }}"
+                                    style="width:34px;height:36px;border:none;background:transparent;cursor:pointer;font-size:1rem;color:#64748B;display:flex;align-items:center;justify-content:center;transition:background .15s;flex-shrink:0;"
+                                    onmouseover="this.style.background='#EEF2FF';this.style.color='#4F46E5'"
+                                    onmouseout="this.style.background='transparent';this.style.color='#64748B'">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    {# Subtotal #}
+                    <div style="width:90px;text-align:right;flex-shrink:0;" class="cart-desktop-only">
+                        <span style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#0F172A;">
+                            ${{ "%.2f" | format(item.subtotal) }}
+                        </span>
+                    </div>
+
+                    {# Remove #}
+                    <form method="POST" action="{{ url_for('cart.remove_from_cart') }}" style="flex-shrink:0;">
+                        <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                        <button type="submit"
+                                style="width:34px;height:34px;border-radius:8px;border:1.5px solid #E2E8F0;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#94A3B8;font-size:.875rem;transition:all .2s;"
+                                onmouseover="this.style.borderColor='#FECACA';this.style.color='#EF4444';this.style.background='#FEF2F2'"
+                                onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#94A3B8';this.style.background='#fff'"
+                                aria-label="Remove item">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# Clear cart #}
+        <div style="margin-top:16px;padding-top:16px;">
+            <form method="POST" action="{{ url_for('cart.clear_cart_route') }}"
+                  onsubmit="return confirm('Clear your entire cart?')">
+                <button type="submit"
+                        style="display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:600;color:#94A3B8;background:none;border:none;cursor:pointer;padding:0;transition:color .2s;"
+                        onmouseover="this.style.color='#EF4444'" onmouseout="this.style.color='#94A3B8'">
+                    <i class="bi bi-trash3"></i> Clear cart
+                </button>
+            </form>
+        </div>
+    </div>
+
+    {#  Order Summary  #}
+    <div style="position:sticky;top:90px;">
+        <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:20px;padding:28px;box-shadow:0 4px 24px rgba(15,23,42,.06);">
+            <h3 style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#0F172A;margin:0 0 24px;padding-bottom:16px;border-bottom:1.5px solid #F1F5F9;">
+                Order Summary
+            </h3>
+
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:.875rem;font-weight:500;color:#64748B;">Subtotal</span>
+                    <span style="font-size:.875rem;font-weight:700;color:#0F172A;">${{ "%.2f" | format(cart.subtotal) }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:.875rem;font-weight:500;color:#64748B;">Shipping</span>
+                    <span style="font-size:.875rem;font-weight:700;color:{{ '#059669' if cart.shipping == 0 else '#0F172A' }};">
+                        {{ 'Free' if cart.shipping == 0 else '$' ~ '%.2f' | format(cart.shipping) }}
+                    </span>
+                </div>
+            </div>
+
+            {% if cart.shipping > 0 and free_shipping_threshold is defined %}
+                {% set remaining = free_shipping_threshold - cart.subtotal | float %}
+                {% if remaining > 0 %}
+                    <div style="background:#EEF2FF;border-radius:10px;padding:14px;margin-bottom:20px;">
+                        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                            <span style="font-size:.75rem;font-weight:600;color:#4F46E5;">Free shipping progress</span>
+                            <span style="font-size:.75rem;font-weight:700;color:#4F46E5;">${{ "%.2f" | format(remaining) }} to go</span>
+                        </div>
+                        <div style="height:6px;background:#C7D2FE;border-radius:99px;overflow:hidden;">
+                            {% set percent = (cart.subtotal / free_shipping_threshold) * 100 %}
+                            <div style="height:100%;background:#4F46E5;border-radius:99px;width:{{ [percent,100]|min }}%;transition:width 1s;"></div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0;border-top:1.5px solid #F1F5F9;border-bottom:1.5px solid #F1F5F9;margin-bottom:20px;">
+                <span style="font-size:.875rem;font-weight:700;color:#0F172A;">Total</span>
+                <span style="font-family:'Outfit',sans-serif;font-size:1.75rem;font-weight:800;color:#0F172A;letter-spacing:-0.03em;">
+                    ${{ "%.2f" | format(cart.total) }}
+                </span>
+            </div>
+
+            <a href="{{ url_for('orders.checkout') }}"
+               style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:15px;border-radius:10px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);box-sizing:border-box;margin-bottom:12px;"
+               onmouseover="this.style.background='#3730A3';this.style.transform='translateY(-1px)'"
+               onmouseout="this.style.background='#4F46E5';this.style.transform='none'">
+                <i class="bi bi-bag-check"></i> Proceed to Checkout
+            </a>
+
+            <a href="{{ url_for('products.products_list') }}"
+               style="display:flex;align-items:center;justify-content:center;gap:6px;font-size:.8125rem;font-weight:600;color:#64748B;text-decoration:none;transition:color .2s;padding:8px;"
+               onmouseover="this.style.color='#4F46E5'" onmouseout="this.style.color='#64748B'">
+                <i class="bi bi-arrow-left"></i> Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>
+
+{% else %}
+{#  Empty Cart  #}
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 24px;border:2px dashed #E2E8F0;border-radius:20px;background:#F8FAFC;text-align:center;">
+    <div style="width:80px;height:80px;border-radius:20px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+        <i class="bi bi-cart-x" style="font-size:2.25rem;color:#4F46E5;"></i>
+    </div>
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#0F172A;margin-bottom:8px;">Your cart is empty</h3>
+    <p style="font-size:.9375rem;color:#94A3B8;margin-bottom:28px;max-width:300px;font-weight:500;">
+        Looks like you haven't added anything yet. Start shopping!
+    </p>
+    <a href="{{ url_for('products.products_list') }}"
+       style="display:inline-flex;align-items:center;gap:8px;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:13px 28px;border-radius:10px;text-decoration:none;transition:all .2s;box-shadow:0 4px 16px rgba(79,70,229,.3);"
+       onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+        <i class="bi bi-bag"></i> Start Shopping
+    </a>
+</div>
+{% endif %}
+
+<style>
+    /* Spin-arrow suppression — belt-and-suspenders */
+    input[type=number] { -moz-appearance: textfield; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    @media (min-width: 1024px) {
+        .cart-layout       { grid-template-columns: 1fr 360px !important; }
+        .cart-th, .cart-desktop-only { display: block !important; }
+        .cart-mobile-price { display: none !important; }
+    }
+    .cart-desktop-only { display: none; }
+</style>
+
+<script>
+/**
+ * cartStep — increment or decrement a cart item qty then submit its form.
+ * Uses hidden input + display span instead of a native number input,
+ * so no browser spin-arrow ever appears next to the + button.
+ */
+function cartStep(productId, delta) {
+    const hidden  = document.getElementById('qty-hidden-'  + productId);
+    const display = document.getElementById('qty-display-' + productId);
+    const form    = document.getElementById('qty-form-'    + productId);
+    if (!hidden || !form) return;
+
+    const incBtn = form.querySelector('[onclick*=", 1"]');
+    const max    = incBtn ? parseInt(incBtn.dataset.max) || 99 : 99;
+    let val = parseInt(hidden.value) || 1;
+
+    val = Math.min(max, Math.max(1, val + delta));
+    hidden.value   = val;
+    display.textContent = val;
+    form.submit();
+}
+</script>
+
+{% endblock %}

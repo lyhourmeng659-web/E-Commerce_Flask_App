@@ -1,0 +1,142 @@
+{% extends "master.html" %}
+{% block title %}Support — {{ message.name }} — Admin{% endblock %}
+{% block content %}
+
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1.5px solid #F1F5F9;">
+        <a href="{{ url_for('admin.support') }}"
+           style="width:36px;height:36px;border-radius:10px;background:#F8FAFC;border:1.5px solid #E2E8F0;display:flex;align-items:center;justify-content:center;color:#64748B;text-decoration:none;flex-shrink:0;transition:all .2s;"
+           onmouseover="this.style.borderColor='#4F46E5';this.style.color='#4F46E5'"
+           onmouseout="this.style.borderColor='#E2E8F0';this.style.color='#64748B'">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div style="min-width:0;">
+            <p style="font-size:.6875rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#4F46E5;margin-bottom:4px;">
+                Admin · Support</p>
+            <h1 style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#0F172A;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                {{ message.subject or 'General Inquiry' }}
+            </h1>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr;gap:20px;" class="sd-grid">
+
+        {# Message body #}
+        <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1.5px solid #F1F5F9;flex-wrap:wrap;gap:8px;">
+                <div>
+                    <p style="font-size:.9375rem;font-weight:700;color:#0F172A;margin:0;">{{ message.name }}</p>
+                    <p style="font-size:.75rem;color:#94A3B8;margin:2px 0 0;">{{ message.email }}</p>
+                </div>
+                <p style="font-size:.75rem;color:#94A3B8;margin:0;">{{ message.created_at.strftime('%d %b %Y · %H:%M') }}</p>
+            </div>
+            <div style="padding:24px;">
+                <p style="font-size:.9375rem;color:#374151;line-height:1.8;white-space:pre-wrap;margin:0;">{{ message.message }}</p>
+            </div>
+            <div style="padding:16px 20px;background:#F8FAFC;border-top:1px solid #F1F5F9;">
+                <a href="mailto:{{ message.email }}?subject=Re: {{ message.subject or 'Your Inquiry' }}"
+                   style="display:inline-flex;align-items:center;gap:7px;background:#4F46E5;color:#fff;font-size:.8125rem;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;transition:background .2s;"
+                   onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                    <i class="bi bi-reply"></i> Reply via Email
+                </a>
+            </div>
+        </div>
+
+        {# Sidebar #}
+        <div style="display:flex;flex-direction:column;gap:16px;">
+
+            {#  Update Status — custom dropdown  #}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:20px;">
+                <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin:0 0 14px;">
+                    Update Status</p>
+                <form method="POST" action="{{ url_for('admin.update_support_status', message_id=message.id) }}"
+                      style="display:flex;flex-direction:column;gap:10px;">
+
+                    {# Hidden real select — submitted with form #}
+                    <select id="sup-status-select" name="status"
+                            style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;">
+                        {% for s, l in [('open','Open'),('in_progress','In Progress'),('resolved','Resolved')] %}
+                            <option value="{{ s }}" {{ 'selected' if (message.status or 'open') == s }}>{{ l }}</option>
+                        {% endfor %}
+                    </select>
+
+                    {# Custom trigger #}
+                    {% set ssc = {'open':('#D97706','#FFFBEB','#FDE68A','bi-circle'),'in_progress':('#4F46E5','#EEF2FF','#C7D2FE','bi-arrow-repeat'),'resolved':('#059669','#ECFDF5','#A7F3D0','bi-check-circle-fill')} %}
+                    {% set cur = ssc.get(message.status or 'open', ssc['open']) %}
+                    {% set cur_label = {'open':'Open','in_progress':'In Progress','resolved':'Resolved'}.get(message.status or 'open','Open') %}
+
+                    <div id="sup-status-trigger" tabindex="0" role="combobox"
+                         aria-haspopup="listbox" aria-expanded="false"
+                         style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px 14px;font-size:.9375rem;font-weight:600;color:#0F172A;cursor:pointer;transition:all .2s;user-select:none;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                        <span style="width:26px;height:26px;border-radius:7px;background:{{ cur[1] }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi {{ cur[3] }}" style="color:{{ cur[0] }};font-size:.8rem;"></i>
+                        </span>
+                            <span id="sup-status-label">{{ cur_label }}</span>
+                        </div>
+                        <i class="bi bi-chevron-down" id="sup-status-chevron"
+                           style="font-size:.75rem;color:#94A3B8;transition:transform .2s;flex-shrink:0;"></i>
+                    </div>
+
+                    {# Dropdown options #}
+                    <div id="sup-status-listbox" role="listbox"
+                         style="display:none;position:absolute;z-index:200;left:0;right:0;margin-top:4px;background:#fff;border:1.5px solid #C7D2FE;border-radius:12px;box-shadow:0 8px 32px rgba(15,23,42,.12);overflow:hidden;">
+                        {% for s, l in [('open','Open'),('in_progress','In Progress'),('resolved','Resolved')] %}
+                            {% set pill = ssc.get(s, ssc['open']) %}
+                            {% set is_current = (message.status or 'open') == s %}
+                            <div role="option" data-value="{{ s }}" data-label="{{ l }}"
+                                 data-icon="{{ pill[3] }}" data-color="{{ pill[0] }}" data-bg="{{ pill[1] }}"
+                                 style="display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:.9375rem;font-weight:{{ '700' if is_current else '500' }};color:#0F172A;cursor:pointer;transition:background .15s;{{ 'background:#EEF2FF;' if is_current else '' }}"
+                                 onmouseover="this.style.background='#EEF2FF'"
+                                 onmouseout="this.style.background='{{ '#EEF2FF' if is_current else 'transparent' }}'">
+                            <span style="width:28px;height:28px;border-radius:7px;background:{{ pill[1] }};border:1px solid {{ pill[2] }};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi {{ pill[3] }}" style="color:{{ pill[0] }};font-size:.85rem;"></i>
+                            </span>
+                                <span>{{ l }}</span>
+                                {% if is_current %}
+                                    <i class="bi bi-check2"
+                                       style="color:#4F46E5;margin-left:auto;font-size:.875rem;"></i>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="submit"
+                            style="width:100%;background:#4F46E5;color:#fff;font-size:.9375rem;font-weight:700;padding:12px;border-radius:10px;border:none;cursor:pointer;transition:background .2s;box-shadow:0 2px 8px rgba(79,70,229,.3);"
+                            onmouseover="this.style.background='#3730A3'" onmouseout="this.style.background='#4F46E5'">
+                        <i class="bi bi-check2-circle"></i> Update
+                    </button>
+                </form>
+            </div>
+
+            {# Details card #}
+            <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;padding:20px;">
+                <p style="font-size:.6875rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94A3B8;margin:0 0 12px;">
+                    Details</p>
+                {% set ssc2 = {'open':('#D97706','#FFFBEB','#FDE68A'),'in_progress':('#4F46E5','#EEF2FF','#C7D2FE'),'resolved':('#059669','#ECFDF5','#A7F3D0')} %}
+                {% set sc = ssc2.get(message.status or 'open', ssc2['open']) %}
+                {% for k, v in [
+                ('Status',  '<span style="display:inline-flex;align-items:center;font-size:.6875rem;font-weight:700;color:'~sc[0]~';background:'~sc[1]~';border:1px solid '~sc[2]~';padding:3px 10px;border-radius:99px;text-transform:capitalize;">'~((message.status or 'open')|replace('_',' '))~'</span>'),
+                ('Read',    ('✓ Read' if message.is_read else '✗ Unread')),
+                ('Subject', message.subject or '—'),
+                ('Email',   message.email)
+            ] %}
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-size:.8125rem;padding:8px 0;border-bottom:1px solid #F8FAFC;gap:12px;">
+                        <span style="color:#94A3B8;font-weight:600;flex-shrink:0;">{{ k }}</span>
+                        <span style="color:#0F172A;font-weight:700;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ v | safe }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @media (min-width: 1024px) {
+            .sd-grid {
+                grid-template-columns:1fr 280px !important;
+            }
+        }
+    </style>
+
+    <script src="{{ url_for("static", filename="js/support_update_status_dropdown.js") }}"></script>
+
+{% endblock %}
