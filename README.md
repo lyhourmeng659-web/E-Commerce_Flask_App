@@ -264,11 +264,3 @@ Key packages: `flask`, `flask-sqlalchemy`, `flask-migrate`, `flask-login`,
 5. Open a Pull Request
 
 ---
-
-## 📄 License
-
-MIT License — free to use, modify, and distribute.
-
----
-
-*Built with ❤️ using Flask*
